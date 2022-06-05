@@ -26,7 +26,7 @@ public class UserControllerTests {
 	@Autowired private ObjectMapper objectMapper;
 	
 	@Test
-	public void shouldCreateUser() throws JsonProcessingException, Exception {
+	public void shouldCreateUser() throws Exception {
 		String email = "dave.Kumar@gmail.com";
 		String password = "dave2022";
 		User newUser = new User(email, password);

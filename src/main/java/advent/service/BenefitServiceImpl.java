@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BenefitService {
+public class BenefitServiceImpl {
 
     private final BenefitRepository benefitRepository;
 
-    public BenefitService(BenefitRepository benefitRepository) {
+    public BenefitServiceImpl(BenefitRepository benefitRepository) {
         this.benefitRepository = benefitRepository;
     }
 

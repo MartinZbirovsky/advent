@@ -1,4 +1,4 @@
-package advent.xception;
+package advent.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

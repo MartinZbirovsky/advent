@@ -3,11 +3,11 @@ package advent.service;
 import advent.model.Role;
 import advent.repository.RoleRepository;
 
-public class RoleService {
+public class RoleServiceImpl {
 
     private final RoleRepository roleRepository;
 
-    public RoleService(RoleRepository roleRepository) {
+    public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 

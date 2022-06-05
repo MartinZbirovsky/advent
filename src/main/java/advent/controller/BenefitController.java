@@ -1,7 +1,7 @@
 package advent.controller;
 
 import advent.model.Benefit;
-import advent.service.BenefitService;
+import advent.service.BenefitServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,28 +12,28 @@ import java.util.List;
 @RequestMapping("/api/benefits")
 public class BenefitController {
 
-    BenefitService benefitService;
-    BenefitController(BenefitService BenefitService) {
-        this.benefitService = BenefitService;
+    final BenefitServiceImpl benefitServiceImpl;
+    BenefitController(BenefitServiceImpl BenefitServiceImpl) {
+        this.benefitServiceImpl = BenefitServiceImpl;
     }
 
     @GetMapping("/{id}")
     public Benefit getBenefit(@PathVariable long id){
-        return benefitService.getBenefit(id);
+        return benefitServiceImpl.getBenefit(id);
     }
 
     @GetMapping("")
     public List<Benefit> getBenefits(){
-        return benefitService.getBenefits();
+        return benefitServiceImpl.getBenefits();
     }
 
     @PostMapping("")
     public Benefit createBenefit (@RequestBody @Valid Benefit benefit){
-        return benefitService.createBenefit(benefit);
+        return benefitServiceImpl.createBenefit(benefit);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBenefit(@PathVariable long id){
-        return benefitService.deleteBenefit(id);
+        return benefitServiceImpl.deleteBenefit(id);
     }
 }

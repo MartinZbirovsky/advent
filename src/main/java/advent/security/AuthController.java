@@ -1,5 +1,6 @@
 package advent.security;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import advent.model.User;
@@ -30,10 +31,5 @@ public class AuthController {
 		} catch (BadCredentialsException ex) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-	}
-
-	@GetMapping("/auth/logout")
-	public void logout() throws Exception {
-
 	}
 }

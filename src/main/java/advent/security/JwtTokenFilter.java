@@ -27,7 +27,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
-									HttpServletResponse response, FilterChain filterChain)
+									HttpServletResponse response,
+									FilterChain filterChain)
 			throws ServletException, IOException {
 
 		if (!hasAuthorizationBearer(request)) {
@@ -65,8 +66,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 		UsernamePasswordAuthenticationToken
 				authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-		authentication.setDetails(
-				new WebAuthenticationDetailsSource().buildDetails(request));
+		authentication.setDetails( new WebAuthenticationDetailsSource().buildDetails(request));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}

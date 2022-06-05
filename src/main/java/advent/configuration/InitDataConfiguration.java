@@ -4,6 +4,7 @@ import advent.model.*;
 import advent.repository.AdsRepository;
 import advent.repository.RoleRepository;
 import advent.repository.UserRepository;
+import advent.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class InitDataConfiguration {
@@ -18,13 +20,13 @@ public class InitDataConfiguration {
     @Bean
     CommandLineRunner commandLineRunner(AdsRepository aRepo,
                                         RoleRepository rRepo,
-                                        UserRepository uRepo){
+                                        UserServiceImpl uService){
         return args -> {
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode("neco");
 
-            int numUsers = uRepo.findAll().size();
+            int numUsers = uService.getUsers().size();
             int numRoles = rRepo.findAll().size();
             int numAds = aRepo.findAll().size();
 
@@ -60,11 +62,18 @@ public class InitDataConfiguration {
 
             // Create users
             if(numUsers == 0)
-                uRepo.save(newUser);
+                uService.save(newUser);
 
             //Save ads
             if(numAds == 0)
                 aRepo.saveAll(newAds);
+
+
+            User user = uService.findByEmail("neco@neco.cz");
+            List<Ads> allADs = aRepo.findAll();
+            allADs.forEach(e -> e.setUser(user));
+
+            aRepo.saveAll(allADs);
         };
     }
 }

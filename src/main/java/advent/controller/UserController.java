@@ -1,7 +1,7 @@
 package advent.controller;
 
 import advent.model.User;
-import advent.service.UserService;
+import advent.service.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -11,10 +11,10 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-	private final UserService userService;
+	private final UserServiceImpl userServiceImpl;
 
-	UserController(UserService userService){
-		this.userService = userService;
+	UserController(UserServiceImpl userServiceImpl){
+		this.userServiceImpl = userServiceImpl;
 	}
 
 	@PostMapping("")
@@ -26,14 +26,14 @@ public class UserController {
 
 		return ResponseEntity.created(uri).body(userDto);*/
 
-		return userService.save(user).getUsername();
+		return userServiceImpl.save(user).getUsername();
 	}
 
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable int id){
-		return userService.getById(id);
+		return userServiceImpl.getById(id);
 	}
 
 	@GetMapping("")
-	public List<User> getUsers(){ return userService.getUsers(); }
+	public List<User> getUsers(){ return userServiceImpl.getUsers(); }
 }

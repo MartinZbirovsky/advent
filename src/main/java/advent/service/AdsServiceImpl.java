@@ -2,10 +2,10 @@ package advent.service;
 
 import advent.model.Ads;
 import advent.model.Category;
+import advent.model.User;
 import advent.repository.AdsRepository;
 import advent.repository.CategoryRepository;
-import advent.service.ServiceInterface.AdsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import advent.service.erviceinterface.AdsService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -13,69 +13,78 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-public class AdsServiceImpl implements AdsService {
+public class AdsServiceImpl implements AdsService<Ads> {
 
     private final AdsRepository adsRepository;
     private final CategoryRepository catRepository;
+    private final UserServiceImpl userService;
 
-    public AdsServiceImpl(AdsRepository adsService, CategoryRepository catRepository){
+    public AdsServiceImpl(AdsRepository adsService, CategoryRepository catRepository, UserServiceImpl userService){
         this.adsRepository = adsService;
         this.catRepository = catRepository;
+        this.userService = userService;
+    }
+
+
+    @Override
+    public Ads addCategoryToAds(Long adsId, Long categoryId) {
+        Ads ads = adsRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + adsId + "not found"));
+        Category category = catRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + categoryId + "not found"));
+
+        ads.setCategory(category);
+        return ads;
+    }
+
+    @Transactional
+    @Override
+    public Ads deleteCategoryFromAds(Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + adsId + "not found"));
+        ads.setCategory(null);
+        return ads;
     }
 
     @Override
-    public Ads addAds(Ads ads) {
+    public Ads addNew(Ads entityBody) {
         /*  User user= (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ads.setUser(user);*/
-        return adsRepository.save(ads);
+        User neco = userService.findByEmail("neco@neco.cz");
+        entityBody.setUser(neco);
+        return adsRepository.save(entityBody);
     }
 
     @Override
-    public List<Ads> getAllAds() {
+    public List<Ads> getAll() {
         return adsRepository.findAll();
     }
 
     @Override
-    public Ads getAdsById(Long id) {
-        return  adsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + id + "not found"));
+    public Ads getById(Long entityId) {
+        return  adsRepository.findById(entityId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + entityId + "not found"));
     }
 
     @Override
-    public Ads deleteAds(Long id) {
-        Ads ads = adsRepository.findById(id).orElse(null);
+    public Ads deleteById(Long entityId) {
+        Ads ads = adsRepository.findById(entityId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + entityId + "not found"));
         adsRepository.deleteById(ads.getId());
         return ads;
     }
 
+    @Transactional
     @Override
-    public Ads editAds(Long id, Ads ads) {
-        return adsRepository.findById(id)
+    public Ads editById(Long entityId, Ads entityBody) {
+        return adsRepository.findById(entityId)
                 .map(ad -> {
-                    ad.setName(ads.getName());
+                    ad.setName(entityBody.getName());
                     return adsRepository.save(ad);
                 })
                 .orElseGet(() -> {
-                    ads.setId(id);
-                    return adsRepository.save(ads);
+                    entityBody.setId(entityId);
+                    return adsRepository.save(entityBody);
                 });
-    }
-
-    @Transactional
-    @Override
-    public Ads addCategoryToAds(Long adsId, Long categoryId) {
-        Ads ads = adsRepository.findById(categoryId).orElse(null);
-        Category category = catRepository.findById(categoryId).orElse(null);
-
-        ads.setCategory(category); //setZipcode(zipcode);
-        return ads;
-    }
-
-    @Transactional
-    @Override
-    public Ads deleteCategoryFromAds(Long categoryId) {
-        Ads ads = adsRepository.findById(categoryId).orElse(null);
-        ads.setCategory(null);
-        return ads;
     }
 }
