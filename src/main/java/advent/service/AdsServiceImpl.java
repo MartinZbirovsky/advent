@@ -5,7 +5,7 @@ import advent.model.Category;
 import advent.model.User;
 import advent.repository.AdsRepository;
 import advent.repository.CategoryRepository;
-import advent.service.erviceinterface.AdsService;
+import advent.service.serviceinterface.AdsService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;

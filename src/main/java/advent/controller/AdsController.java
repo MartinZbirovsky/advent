@@ -33,8 +33,8 @@ public class AdsController {
         return adsServiceImpl.addNew(ads);
     }
 
-    @PutMapping("")
-    public Ads updateAds(@RequestBody Ads ads, @PathVariable Long id) {
+    @PutMapping("/{id}")
+    public Ads updateAds(@PathVariable Long id, @RequestBody Ads ads) {
         return adsServiceImpl.editById(id, ads);
     }
 

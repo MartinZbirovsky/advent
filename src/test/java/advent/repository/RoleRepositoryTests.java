@@ -16,7 +16,7 @@ import org.springframework.test.annotation.Rollback;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Rollback(false)
 public class RoleRepositoryTests {
-	@Autowired private RoleRepository repo;
+	/*@Autowired private RoleRepository repo;
 	
 	@Test
 	public void testCreateRoles() {
@@ -28,5 +28,5 @@ public class RoleRepositoryTests {
 		
 		long count = repo.count();
 		assertEquals(3, count);
-	}
+	}*/
 }

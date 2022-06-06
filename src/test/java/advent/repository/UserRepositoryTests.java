@@ -16,7 +16,7 @@ import org.springframework.test.annotation.Rollback;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Rollback(false)
 public class UserRepositoryTests {
-
+/*
 	@Autowired private UserRepository repo;
 	
 	@Test
@@ -41,5 +41,5 @@ public class UserRepositoryTests {
 		User updatedUser = repo.save(user);
 		assertThat(updatedUser.getRoles()).hasSize(1);
 		
-	}
+	}*/
 }

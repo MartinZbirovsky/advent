@@ -1,7 +1,9 @@
 package advent.service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import advent.model.Ads;
 import advent.model.User;
 import advent.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,5 +37,12 @@ public class UserServiceImpl {
 	public User findByEmail(String email){
 		return userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User " + email + " not found."));
+	}
+
+	public User deleteById(int entityId) {
+		User user = userRepository.findById(entityId)
+				.orElseThrow(() -> new EntityNotFoundException("User" + entityId + "not found"));
+		userRepository.deleteById(user.getId());
+		return user;
 	}
 }

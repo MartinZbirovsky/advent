@@ -5,10 +5,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.util.ArrayList;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data

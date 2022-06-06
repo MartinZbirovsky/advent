@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class AdsControllerTest {
-    @Autowired
+    /*@Autowired
     private MockMvc mvc;
 
     @Test
@@ -22,5 +22,5 @@ class AdsControllerTest {
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.name").value("Harry"));
-    }
+    }*/
 }

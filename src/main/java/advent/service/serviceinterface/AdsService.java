@@ -1,6 +1,6 @@
-package advent.service.erviceinterface;
+package advent.service.serviceinterface;
 
-import advent.service.erviceinterface.general.BaseService;
+import advent.service.serviceinterface.general.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTests {
-
+/*
 	@Autowired private MockMvc mockMvc;
 	@Autowired private ObjectMapper objectMapper;
 	
@@ -40,5 +40,5 @@ public class UserControllerTests {
 		resultActions.andDo(print());
 		resultActions.andExpect(jsonPath("id", notNullValue()));
 		resultActions.andExpect(jsonPath("email", is(email)));
-	}
+	}*/
 }

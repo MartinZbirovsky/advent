@@ -1,4 +1,4 @@
-package advent.service.erviceinterface.general;
+package advent.service.serviceinterface.general;
 
 import java.util.List;
 

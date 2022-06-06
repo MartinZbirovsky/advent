@@ -13,11 +13,9 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String street;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "city_id")
-    private City city;
+    private String city;
 
-    public Address(String street, City city){
+    public Address(String street, String city){
         this.street = street;
         this.city = city;
     }

@@ -39,8 +39,7 @@ public class InitDataConfiguration {
             if(numRoles == 0)
                 rRepo.saveAll(roles);
 
-            City city = new City("Olomouc");
-            Address address = new Address("Olomoucka", city);
+            Address address = new Address("Olomoucka", "Olomouc");
 
             User newUser = new User("neco@neco.cz", password, address, roles);
 
