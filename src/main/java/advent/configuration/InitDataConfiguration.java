@@ -6,13 +6,13 @@ import advent.repository.RoleRepository;
 import advent.repository.UserRepository;
 import advent.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Configuration
 public class InitDataConfiguration {
@@ -22,6 +22,9 @@ public class InitDataConfiguration {
                                         RoleRepository rRepo,
                                         UserServiceImpl uService){
         return args -> {
+          ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+            User newUser = context.getBean("newuser", User.class);
+
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode("neco");
@@ -30,7 +33,7 @@ public class InitDataConfiguration {
             int numRoles = rRepo.findAll().size();
             int numAds = aRepo.findAll().size();
 
-            List<Role> roles = new ArrayList<>();
+            Set<Role> roles = new HashSet<>();
             roles.add(new Role("ROLE_ADMIN"));
             roles.add(new Role("ROLE_EDITOR"));
             roles.add(new Role("ROLE_CUSTOMER"));
@@ -41,7 +44,10 @@ public class InitDataConfiguration {
 
             Address address = new Address("Olomoucka", "Olomouc");
 
-            User newUser = new User("neco@neco.cz", password, address, roles);
+            newUser.setEmail("neco@neco.cz");
+            newUser.setPassword(password);
+            newUser.setAddress(address);
+            newUser.setRoles(roles);
 
             List<Ads> newAds = new ArrayList<>();
             newAds.add(new Ads("JAVA"));

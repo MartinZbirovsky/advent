@@ -23,6 +23,7 @@ public class Mapper {
         UserDtoRes userDtoRes = new UserDtoRes();
         userDtoRes.setEmail(user.getEmail());
         userDtoRes.setAddress(user.getAddress());
+        userDtoRes.setId(user.getId());
         return userDtoRes;
     }
 }

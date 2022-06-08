@@ -2,6 +2,7 @@ package advent.controller;
 
 import advent.model.Ads;
 import advent.service.AdsServiceImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -18,7 +19,7 @@ public class AdsController {
     }
 
     @GetMapping()
-   // @RolesAllowed({"ROLE_ADMIN"})
+    //@PreAuthorize("hasAnyRole('ADMIN')")
     public List<Ads> getAds (){
         return adsServiceImpl.getAll();
     }

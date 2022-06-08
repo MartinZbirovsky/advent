@@ -3,9 +3,11 @@ package advent.service;
 import advent.model.Category;
 import advent.repository.CategoryRepository;
 import advent.service.serviceinterface.CategoryService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CategoryServiceImpl implements CategoryService {
 
     CategoryRepository categoryRepository;

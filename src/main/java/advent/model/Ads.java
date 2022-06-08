@@ -2,16 +2,25 @@ package advent.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Ads {
 
     @Id
@@ -37,6 +46,15 @@ public class Ads {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="id_user")
     private User user;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIME)
+    private Date created_at;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIME)
+    private Date modified_at;
+
     public Ads(String name) {
         this.name = name;
     }

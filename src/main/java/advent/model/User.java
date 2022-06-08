@@ -1,17 +1,14 @@
 package advent.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static javax.persistence.FetchType.EAGER;
 
@@ -34,11 +31,16 @@ public class User implements UserDetails {
 
 	@ManyToMany(fetch = EAGER)
 	@JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private List<Role> roles = new ArrayList<>();
+	private Set<Role> roles = new HashSet<>();
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = EAGER)
 	@JoinColumn(name = "address_id")
 	private Address address;
+
+	private boolean isAccountNonExpired = true;
+	private boolean isAccountNonLocked = true;
+	private boolean isCredentialsNonExpired = true;
+	private boolean isEnabled = true;
 
 	/*@OneToMany(mappedBy="user")
 	private Set<Ads> items;*/
@@ -49,8 +51,7 @@ public class User implements UserDetails {
 		this.password = password;
 	}
 
-
-	public User(String email, String password, Address address, List<Role> roles) {
+	public User(String email, String password, Address address, Set<Role> roles) {
 		this.email = email;
 		this.password = password;
 		this.address = address;
@@ -73,20 +74,18 @@ public class User implements UserDetails {
 	}
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return this.isAccountNonExpired;
 	}
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return this.isAccountNonLocked;
 	}
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return true;
+		return this.isCredentialsNonExpired;
 	}
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.isEnabled;
 	}
-
-
 }
