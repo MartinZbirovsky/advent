@@ -2,33 +2,60 @@ package advent.service;
 
 import advent.model.Benefit;
 import advent.repository.BenefitRepository;
-import org.springframework.http.ResponseEntity;
+import advent.service.serviceinterface.BenefitService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import javax.transaction.Transactional;
 
 @Service
-public class BenefitServiceImpl {
+@RequiredArgsConstructor
+public class BenefitServiceImpl implements BenefitService<Benefit> {
 
     private final BenefitRepository benefitRepository;
 
-    public BenefitServiceImpl(BenefitRepository benefitRepository) {
-        this.benefitRepository = benefitRepository;
+    @Override
+    public Benefit addNew(Benefit benefit) {
+        return benefitRepository.save(benefit);
     }
 
-    public Benefit getBenefit(Long id) {
-        return benefitRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User" + id + "not found"));}
-    public List<Benefit> getBenefits() {return benefitRepository.findAll();}
-    public Benefit createBenefit(Benefit benefit){return benefitRepository.save(benefit);}
-    public ResponseEntity<?> deleteBenefit(Long id) {
-        return benefitRepository.findById(id)
-            .map(post -> {
-                benefitRepository.delete(post);
-                return ResponseEntity.ok().build();
-            })
-            .orElseThrow(() ->
-                    new RuntimeException("PostId " + id + " not found")
-            );
+    @Override
+    public Page<Benefit> getAll(int pageNo, int pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        return benefitRepository.findAll(paging);
+    }
+
+    @Override
+    public Benefit get(Long benefitId) {
+        return benefitRepository.findById(benefitId)
+                .orElseThrow(() -> new EntityNotFoundException("Benefit " + benefitId + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public Benefit edit(Long entityId, Benefit benefit) {
+        return benefitRepository.findById(entityId)
+                .map(ad -> {
+                    ad.setName(benefit.getName());
+                    return benefitRepository.save(ad);
+                })
+                .orElseGet(() -> {
+                    benefit.setId(entityId);
+                    return benefitRepository.save(benefit);
+                });
+    }
+
+    @Override
+    @Transactional
+    public Benefit delete(Long benefitId) {
+        Benefit benefit = benefitRepository.findById(benefitId)
+                .orElseThrow(() -> new EntityNotFoundException("Address " + benefitId + " not found"));
+        benefitRepository.deleteById(benefit.getId());
+        return benefit;
     }
 }

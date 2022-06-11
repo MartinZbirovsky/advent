@@ -29,12 +29,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(username -> userRepo.findByEmail(username)
 				.orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found.")));
 	}
-
-/*	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}*/
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
@@ -42,20 +36,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		
 		http.authorizeRequests()
 				.antMatchers("/auth/login", "/api/**", "/**").permitAll()
+				/*.antMatchers("/auth/**").permitAll()
+				.antMatchers("/api/ads/").hasRole("ADMIN")*/
 				.anyRequest()
 				.authenticated()
-				.and();
+				.and()
+				.logout();
 		
         http.exceptionHandling()
                 .authenticationEntryPoint(
-                    (request, response, ex) -> {
-                        response.sendError(
-                            HttpServletResponse.SC_UNAUTHORIZED,
-                            ex.getMessage()
-                        );
-                    }
+                    (request, response, ex) -> response.sendError(
+						HttpServletResponse.SC_UNAUTHORIZED,
+						ex.getMessage()
+					)
                 );
 		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	@Override

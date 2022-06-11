@@ -3,7 +3,6 @@ package advent.configuration;
 import advent.model.*;
 import advent.repository.AdsRepository;
 import advent.repository.RoleRepository;
-import advent.repository.UserRepository;
 import advent.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
@@ -22,14 +21,14 @@ public class InitDataConfiguration {
                                         RoleRepository rRepo,
                                         UserServiceImpl uService){
         return args -> {
-          ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+          ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
             User newUser = context.getBean("newuser", User.class);
-
+            String email = "1@1.cz";
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode("neco");
 
-            int numUsers = uService.getUsers().size();
+            int numUsers = uService.getUsers("", 0, 5, "id").getSize();
             int numRoles = rRepo.findAll().size();
             int numAds = aRepo.findAll().size();
 
@@ -44,9 +43,9 @@ public class InitDataConfiguration {
 
             Address address = new Address("Olomoucka", "Olomouc");
 
-            newUser.setEmail("neco@neco.cz");
+            newUser.setEmail(email);
             newUser.setPassword(password);
-            newUser.setAddress(address);
+            newUser.setFirstAddress(address);
             newUser.setRoles(roles);
 
             List<Ads> newAds = new ArrayList<>();
@@ -60,25 +59,25 @@ public class InitDataConfiguration {
             Benefit benefit1 = new Benefit("13 plat");
             Benefit benefit2 = new Benefit("Home office");
 
-            newAds.get(0).addBenefitToAds(benefit1);
-            newAds.get(0).addBenefitToAds(benefit2);
-            newAds.get(1).addBenefitToAds(benefit1);
+            newAds.get(0).addBenefit(benefit1);
+            newAds.get(0).addBenefit(benefit2);
+            newAds.get(1).addBenefit(benefit1);
 
 
             // Create users
             if(numUsers == 0)
-                uService.save(newUser);
+                uService.addNew(newUser);
 
             //Save ads
             if(numAds == 0)
                 aRepo.saveAll(newAds);
 
 
-            User user = uService.findByEmail("neco@neco.cz");
+           /* User user = uService.findByEmail(email);
             List<Ads> allADs = aRepo.findAll();
             allADs.forEach(e -> e.setUser(user));
 
-            aRepo.saveAll(allADs);
+            aRepo.saveAll(allADs);*/
         };
     }
 }

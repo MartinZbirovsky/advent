@@ -1,13 +1,18 @@
 package advent.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static javax.persistence.FetchType.EAGER;
@@ -15,10 +20,11 @@ import static javax.persistence.FetchType.EAGER;
 @Entity
 @Table(name = "users")
 @Data
+@NoArgsConstructor
 public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@Column(nullable = false, length = 50, unique = true)
 	@Email
@@ -27,24 +33,39 @@ public class User implements UserDetails {
 	@Column(nullable = false, length = 64)
 	private String password;
 
-	//private boolean active;
+	@Min(0)
+	private Long credits;
 
+	// SOFT DELETE
+
+	@CreatedDate
+	private LocalDateTime createdAt;
+	@LastModifiedDate
+	private LocalDateTime modifiedAt;
+	
 	@ManyToMany(fetch = EAGER)
 	@JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = EAGER)
-	@JoinColumn(name = "address_id")
-	private Address address;
+	@JoinColumn(name = "first_address_id")
+	private Address firstAddress;
 
+	@ManyToOne
+	@JoinColumn(name = "second_address_id")
+	private Address secondAddress;
+
+	@NotNull
 	private boolean isAccountNonExpired = true;
+	@NotNull
 	private boolean isAccountNonLocked = true;
+	@NotNull
 	private boolean isCredentialsNonExpired = true;
+	@NotNull
 	private boolean isEnabled = true;
 
 	/*@OneToMany(mappedBy="user")
 	private Set<Ads> items;*/
-	public User() { }
 
 	public User(String email, String password) {
 		this.email = email;
@@ -54,9 +75,10 @@ public class User implements UserDetails {
 	public User(String email, String password, Address address, Set<Role> roles) {
 		this.email = email;
 		this.password = password;
-		this.address = address;
+		this.firstAddress = address;
 		this.roles = roles;
 	}
+
 	public void addRole(Role role) { this.roles.add(role); }
 	public void removeRole(Role role) { this.roles.remove(role); }
 

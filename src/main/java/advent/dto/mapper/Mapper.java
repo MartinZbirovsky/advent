@@ -1,29 +1,25 @@
 package advent.dto.mapper;
 
-import advent.dto.responseDto.UserDtoRes;
+import advent.dto.requestDto.UserDetailDto;
+import advent.dto.responseDto.UserCreateDto;
 import advent.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Mapper {
 
-    /*public AdsDTO transformToDto(Ads entity) {
-        AdsDTO dto = new AdsDTO();
-        dto.setName(entity.getName());
-        return dto;
+    public UserCreateDto userToCreateDto(User user) {
+        UserCreateDto userCreateDto = new UserCreateDto();
+        userCreateDto.setId(user.getId());
+        userCreateDto.setEmail(user.getEmail());
+        return userCreateDto;
     }
 
-    public Ads transformToEntity(AdsDTO dto) {
-        Ads dev = new Ads();
-        dev.setName(dto.getName());
-        return dev;
-    }*/
-
-    public UserDtoRes UserToDto(User user) {
-        UserDtoRes userDtoRes = new UserDtoRes();
-        userDtoRes.setEmail(user.getEmail());
-        userDtoRes.setAddress(user.getAddress());
-        userDtoRes.setId(user.getId());
-        return userDtoRes;
+    public UserDetailDto userToDetailDto(User user) {
+        UserDetailDto userCreateDtoRes = new UserDetailDto();
+        userCreateDtoRes.setId(user.getId());
+        userCreateDtoRes.setEmail(user.getEmail());
+        userCreateDtoRes.setAddress(user.getFirstAddress());
+        return userCreateDtoRes;
     }
 }

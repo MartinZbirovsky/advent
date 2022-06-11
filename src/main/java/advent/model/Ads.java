@@ -5,14 +5,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,11 +55,11 @@ public class Ads {
         this.name = name;
     }
 
-    public void addBenefitToAds (Benefit benefit){
+    public void addBenefit (Benefit benefit){
         this.benefits.add(benefit);
     }
 
-    public void deleteBenefitFromAds (Benefit benefit) {
+    public void removeBenefit (Benefit benefit) {
         this.benefits.remove(benefit);
     }
 }

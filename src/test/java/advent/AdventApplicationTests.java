@@ -6,6 +6,7 @@ class AdventApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("OO");
 	}
 
 }

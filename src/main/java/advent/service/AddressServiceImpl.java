@@ -3,62 +3,61 @@ package advent.service;
 import advent.model.Address;
 import advent.repository.AddressRepository;
 import advent.service.serviceinterface.AddressService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService<Address> {
 
     private final AddressRepository addressRepository;
 
-    public AddressServiceImpl(AddressRepository addressRepository) {
-        this.addressRepository = addressRepository;
+    @Override
+    @Transactional
+    public Address addNew(Address address) {
+        return addressRepository.save(address);
     }
 
     @Override
-    public Address addNew(Address entity) {
-        return null;
+    public Page<Address> getAll(int pageNo, int pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        return addressRepository.findAll(paging);
     }
 
     @Override
-    public List<Address> getAll() {
-        return null;
+    public Address get(Long addressId) {
+        return  addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Address " + addressId + " not found"));
     }
 
     @Override
-    public Address getById(Long entity) {
-        return null;
+    @Transactional
+    public Address delete(Long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Address " + addressId + " not found"));
+        addressRepository.deleteById(address.getId());
+        return address;
     }
 
     @Override
-    public Address deleteById(Long entity) {
-        return null;
-    }
-
-    @Override
-    public Address editById(Long addressId, Address entity) {
-        return null;
-    }
-/*
-    @Override
-    public City deleteById(Long entityId) {
-        City city = cityRepository.findById(entityId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + entityId + "not found"));
-        cityRepository.deleteById(city.getId());
-        return city;
-    }
-
-    @Override
-    public City editById(Long entityId, City entityBody) {
-        return cityRepository.findById(entityId)
-                .map(ad -> {
-                    ad.setName(entityBody.getName());
-                    return cityRepository.save(ad);
+    @Transactional
+    public Address edit(Long addressId, Address address) {
+        return addressRepository.findById(addressId)
+                .map(adr -> {
+                    adr.setStreet(address.getStreet());
+                    adr.setCity(address.getCity());
+                    return addressRepository.save(adr);
                 })
                 .orElseGet(() -> {
-                    entityBody.setId(entityId);
-                    return cityRepository.save(entityBody);
+                    address.setId(addressId);
+                    return addressRepository.save(address);
                 });
-    }*/
+    }
 }

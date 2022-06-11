@@ -1,90 +1,131 @@
 package advent.service;
 
 import advent.model.Ads;
+import advent.model.Benefit;
 import advent.model.Category;
-import advent.model.User;
 import advent.repository.AdsRepository;
-import advent.repository.CategoryRepository;
 import advent.service.serviceinterface.AdsService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService<Ads> {
 
     private final AdsRepository adsRepository;
-    private final CategoryRepository catRepository;
+    private final CategoryServiceImpl catService;
     private final UserServiceImpl userService;
-
-    public AdsServiceImpl(AdsRepository adsService, CategoryRepository catRepository, UserServiceImpl userService){
-        this.adsRepository = adsService;
-        this.catRepository = catRepository;
-        this.userService = userService;
-    }
-
-
-    @Override
-    public Ads addCategoryToAds(Long adsId, Long categoryId) {
-        Ads ads = adsRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + adsId + "not found"));
-        Category category = catRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + categoryId + "not found"));
-
-        ads.setCategory(category);
-        return ads;
-    }
+    private final BenefitServiceImpl benefitService;
 
     @Transactional
-    @Override
-    public Ads deleteCategoryFromAds(Long adsId) {
-        Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + adsId + "not found"));
-        ads.setCategory(null);
-        return ads;
-    }
-
-    @Override
     public Ads addNew(Ads entityBody) {
         /*  User user= (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ads.setUser(user);*/
-        User neco = userService.findByEmail("neco@neco.cz");
-        entityBody.setUser(neco);
+       // User neco = userService.findByEmail("neco@neco.cz");
+      //  entityBody.setUser(neco);
         return adsRepository.save(entityBody);
     }
 
     @Override
-    public List<Ads> getAll() {
-        return adsRepository.findAll();
+    public Page<Ads> getAll(int pageNo, int pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        return adsRepository.findAll(paging);
     }
 
     @Override
-    public Ads getById(Long entityId) {
-        return  adsRepository.findById(entityId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + entityId + "not found"));
+    public Page<Ads> getAll(String adName, Long categoryId, int pageNo, int pageSize, String sortBy) {
+        Page<Ads> ads = null;
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        if(!adName.isEmpty() && categoryId != 0){
+            ads = adsRepository.findByNameContaining(adName, paging);
+            System.out.println("LOOOL");
+        }
+        else if (!adName.isEmpty() && categoryId == 0){
+            ads = adsRepository.findByNameContaining(adName, paging);
+        }
+        else if (adName.isEmpty() && categoryId != 0) {
+            ads = adsRepository.findByCategory(categoryId, paging);
+        }else {
+            ads = adsRepository.findAll(paging) ;
+        }
+        return ads;
     }
 
     @Override
-    public Ads deleteById(Long entityId) {
-        Ads ads = adsRepository.findById(entityId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement" + entityId + "not found"));
+    public Ads get(Long adsId) {
+        return  adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public Ads delete(Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
         adsRepository.deleteById(ads.getId());
         return ads;
     }
 
-    @Transactional
     @Override
-    public Ads editById(Long entityId, Ads entityBody) {
+    @Transactional
+    public Ads edit(Long entityId, Ads ads) {
         return adsRepository.findById(entityId)
                 .map(ad -> {
-                    ad.setName(entityBody.getName());
+                    ad.setName(ads.getName());
                     return adsRepository.save(ad);
                 })
                 .orElseGet(() -> {
-                    entityBody.setId(entityId);
-                    return adsRepository.save(entityBody);
+                    ads.setId(entityId);
+                    return adsRepository.save(ads);
                 });
+    }
+
+    @Transactional
+    public Ads addCategory(Long categoryId, Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+        Category category = catService.get(categoryId);
+        ads.setCategory(category);
+
+        return adsRepository.save(ads);
+    }
+
+    @Transactional
+    public Ads removeCategory(Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+        ads.setCategory(null);
+
+        return adsRepository.save(ads);
+    }
+
+    @Transactional
+    public Ads addBenefit(Long benefitId, Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+
+        Benefit benefit = benefitService.get(benefitId);
+        ads.addBenefit(benefit);
+
+        return adsRepository.save(ads);
+    }
+
+    @Transactional
+    public Ads removeBenefit(Long benefitId, Long adsId) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+
+        Benefit benefit = benefitService.get(benefitId);
+        ads.removeBenefit(benefit);
+
+        return adsRepository.save(ads);
     }
 }

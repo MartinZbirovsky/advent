@@ -1,11 +1,11 @@
 package advent.service.serviceinterface.general;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface BaseService<T> {
     T addNew(T entityBody);
-    List<T> getAll();
-    T getById(Long entityId);
-    T deleteById(Long entityId);
-    T editById(Long entityId, T entityBody);
+    Page<T> getAll(int pageNo, int pageSize, String sortBy);
+    T get(Long entityId);
+    T edit(Long entityId, T entityBody);
+    T delete(Long entityId);
 }
