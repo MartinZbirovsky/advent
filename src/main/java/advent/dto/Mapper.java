@@ -1,4 +1,4 @@
-package advent.dto.mapper;
+package advent.dto;
 
 import advent.dto.requestDto.UserDetailDto;
 import advent.dto.responseDto.UserCreateDto;

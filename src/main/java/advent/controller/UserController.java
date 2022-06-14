@@ -1,6 +1,6 @@
 package advent.controller;
 
-import advent.dto.mapper.Mapper;
+import advent.dto.Mapper;
 import advent.dto.requestDto.UserDetailDto;
 import advent.dto.responseDto.UserCreateDto;
 import advent.model.User;

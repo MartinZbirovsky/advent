@@ -21,7 +21,7 @@ public class InitDataConfiguration {
                                         RoleRepository rRepo,
                                         UserServiceImpl uService){
         return args -> {
-          ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
+         /* ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
             User newUser = context.getBean("newuser", User.class);
             String email = "1@1.cz";
 

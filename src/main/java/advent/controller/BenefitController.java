@@ -14,7 +14,7 @@ import static advent.configuration.Constants.PAGE_SIZE;
 @RequestMapping("/api/benefits")
 public class BenefitController {
 
-    final BenefitServiceImpl benefitServiceImpl;
+    private final BenefitServiceImpl benefitServiceImpl;
     BenefitController(BenefitServiceImpl BenefitServiceImpl) {
         this.benefitServiceImpl = BenefitServiceImpl;
     }

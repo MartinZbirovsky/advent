@@ -14,9 +14,10 @@ import static advent.configuration.Constants.PAGE_SIZE;
 @RestController
 @RequestMapping("/api/ads")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081")
 public class AdsController {
 
-    final AdsServiceImpl adsServiceImpl;
+    private final AdsServiceImpl adsServiceImpl;
 
     @GetMapping("")
     //@RolesAllowed(Role.AUTHOR_ADMIN)
@@ -41,7 +42,7 @@ public class AdsController {
     }
 
     @PutMapping("/{id}")
-    public Ads updateAds(@PathVariable Long id, @RequestBody Ads ads) {
+    public Ads editAds(@PathVariable Long id, @Valid @RequestBody Ads ads) {
         return adsServiceImpl.edit(id, ads);
     }
 

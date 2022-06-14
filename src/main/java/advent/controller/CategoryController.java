@@ -16,7 +16,7 @@ import static advent.configuration.Constants.PAGE_SIZE;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    CategoryServiceImpl categoryServiceImpl;
+    private final CategoryServiceImpl categoryServiceImpl;
 
     @GetMapping("")
     public Page<Category> getAllCategories ( @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,

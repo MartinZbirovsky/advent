@@ -1,6 +1,6 @@
 package advent.service;
 
-import advent.dto.mapper.Mapper;
+import advent.dto.Mapper;
 import advent.dto.requestDto.UserDetailDto;
 import advent.model.Role;
 import advent.model.User;
@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
 @Service
@@ -26,6 +27,7 @@ public class UserServiceImpl {
 	private final Mapper mapper;
 	private final RoleServiceImpl roleService;
 
+	@Transactional
 	public User addNew(User user) {
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);

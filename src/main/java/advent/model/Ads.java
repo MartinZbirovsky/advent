@@ -1,5 +1,8 @@
 package advent.model;
 
+import advent.enums.stateAds;
+import advent.enums.workTypeAds;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,7 +19,6 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class Ads {
 
     @Id
@@ -27,8 +29,28 @@ public class Ads {
     @Length(min = 1, max = 50)
     private String name;
 
+    @Length(min = 0, max = 800)
+    private String description = "";
+
+    @Length(min = 0, max = 200)
+    private String requirements;
+
+    private String companyOffer;
+    private Long minSalary;
+    private Long maxSalary;
+
+    @Length(min = 0, max = 150)
+    private String officePlace;
+
+    @Enumerated(EnumType.STRING)
+    private workTypeAds type = workTypeAds.OTHER;
+
+    @Enumerated(EnumType.STRING)
+    private stateAds state = stateAds.ACTIVE;
+
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
@@ -39,17 +61,17 @@ public class Ads {
     )
     private Set<Benefit> benefits = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name="id_user")
     private User user;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
-    private Date created_at;
+    private Date createdAt;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
-    private Date modified_at;
+    private Date modifiedAt;
 
     public Ads(String name) {
         this.name = name;

@@ -2,17 +2,14 @@ package advent.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static javax.persistence.FetchType.EAGER;
@@ -21,10 +18,18 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User extends UserDetail implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Length(min = 0, max = 50)
+	public String fistName;
+
+	@Length(min = 0, max = 50)
+	public String secondName;
+
+	public String companyName = "";
 
 	@Column(nullable = false, length = 50, unique = true)
 	@Email
@@ -32,28 +37,16 @@ public class User implements UserDetails {
 
 	@Column(nullable = false, length = 64)
 	private String password;
-
-	@Min(0)
-	private Long credits;
-
 	// SOFT DELETE
-
-	@CreatedDate
-	private LocalDateTime createdAt;
-	@LastModifiedDate
-	private LocalDateTime modifiedAt;
-	
-	@ManyToMany(fetch = EAGER)
+	@ManyToMany(fetch = EAGER, cascade = CascadeType.REFRESH)
 	@JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = EAGER)
-	@JoinColumn(name = "first_address_id")
-	private Address firstAddress;
+	@OneToMany(mappedBy="user")
+	private Set<Payment> payment = new HashSet<>();
 
-	@ManyToOne
-	@JoinColumn(name = "second_address_id")
-	private Address secondAddress;
+	@OneToMany(mappedBy="user")
+	private Set<Ads> items;
 
 	@NotNull
 	private boolean isAccountNonExpired = true;
@@ -63,9 +56,6 @@ public class User implements UserDetails {
 	private boolean isCredentialsNonExpired = true;
 	@NotNull
 	private boolean isEnabled = true;
-
-	/*@OneToMany(mappedBy="user")
-	private Set<Ads> items;*/
 
 	public User(String email, String password) {
 		this.email = email;

@@ -17,7 +17,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -42,7 +42,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Category delete(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category " + categoryId + " not found"));
-        categoryRepository.deleteById(category.getId());
+        category.getAds().forEach(ads -> ads.setCategory(null));
+        categoryRepository.save(category);
+        categoryRepository.delete(category);
         return category;
     }
 
