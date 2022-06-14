@@ -1,7 +1,7 @@
 package advent.controller;
 
 import advent.model.Ads;
-import advent.service.AdsServiceImpl;
+import advent.service.Interface.AdsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +15,9 @@ import static advent.configuration.Constants.PAGE_SIZE;
 @RequestMapping("/api/ads")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:8081")
-public class AdsController {
+public class AdsController{
 
-    private final AdsServiceImpl adsServiceImpl;
+    private final AdsService adsService;
 
     @GetMapping("")
     //@RolesAllowed(Role.AUTHOR_ADMIN)
@@ -28,51 +28,51 @@ public class AdsController {
             @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
             @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy){
-        return adsServiceImpl.getAll(adName, categoryId, pageNo, pageSize, sortBy);
+        return adsService.getAll(adName, categoryId, pageNo, pageSize, sortBy);
     }
 
     @GetMapping("/{id}")
     public Ads getAdsById (@PathVariable Long id){
-        return adsServiceImpl.get(id);
+        return adsService.get(id);
     }
 
     @PostMapping("")
     public Ads addAds (@Valid @RequestBody Ads ads){
-        return adsServiceImpl.addNew(ads);
+        return adsService.addNew(ads);
     }
 
     @PutMapping("/{id}")
     public Ads editAds(@PathVariable Long id, @Valid @RequestBody Ads ads) {
-        return adsServiceImpl.edit(id, ads);
+        return adsService.edit(id, ads);
     }
 
     @DeleteMapping("/{id}")
     public Ads deleteAds(@PathVariable Long id) {
-        return adsServiceImpl.delete(id);
+        return adsService.delete(id);
     }
 
     @PostMapping("/addCategory/{categoryId}/toAds/{adsId}")
     public Ads addCategory(@PathVariable Long categoryId, @PathVariable Long adsId) {
-        return adsServiceImpl.addCategory(categoryId, adsId);
+        return adsService.addCategory(categoryId, adsId);
     }
 
    /* @GetMapping("/allMyAds/${id}")
     public List<Ads> allMyAds (Long id) {
-      return adsServiceImpl.getById(id);
+      return adsService.getById(id);
     };*/
 
     @PostMapping("/removeCategory/{adsId}")
     public Ads removeCategory(@PathVariable Long adsId) {
-        return adsServiceImpl.removeCategory(adsId);
+        return adsService.removeCategory(adsId);
     }
 
     @PostMapping("/addBenefit/{benefitId}/toAds/{adsId}")
     public Ads addBenefit(@PathVariable Long benefitId, @PathVariable Long adsId) {
-        return adsServiceImpl.addBenefit(benefitId, adsId);
+        return adsService.addBenefit(benefitId, adsId);
     }
 
     @PostMapping("/removeBenefit/{benefitId}/fromAds/{adsId}")
     public Ads removeBenefit(@PathVariable Long benefitId, @PathVariable Long adsId) {
-        return adsServiceImpl.removeBenefit(benefitId, adsId);
+        return adsService.removeBenefit(benefitId, adsId);
     }
 }

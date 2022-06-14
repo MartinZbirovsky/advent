@@ -1,8 +1,8 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Benefit;
 import advent.repository.BenefitRepository;
-import advent.service.serviceinterface.BenefitService;
+import advent.service.Interface.BenefitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BenefitServiceImpl implements BenefitService<Benefit> {
+public class BenefitServiceImpl implements BenefitService {
 
     private final BenefitRepository benefitRepository;
 

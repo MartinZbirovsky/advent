@@ -1,8 +1,8 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Category;
 import advent.repository.CategoryRepository;
-import advent.service.serviceinterface.CategoryService;
+import advent.service.Interface.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

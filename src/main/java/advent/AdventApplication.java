@@ -15,11 +15,11 @@ public class AdventApplication extends SpringBootServletInitializer {
 		SpringApplication.run(AdventApplication.class, args);
 	}
 
+	// To utils
 	@Bean
 	PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
 	};
-
 
 	// na co to je?
 	@Override

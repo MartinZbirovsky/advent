@@ -1,31 +1,32 @@
 package advent.controller;
 
+import advent.dto.requestDto.RoleToUserFormDto;
 import advent.model.Role;
 import advent.model.User;
-import advent.service.serviceinterface.UserService;
+import advent.service.Interface.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static advent.configuration.Constants.PAGE_NUMBER;
+import static advent.configuration.Constants.PAGE_SIZE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -38,8 +39,11 @@ public class UserController {
 	private final UserService userService;
 
 	@GetMapping("/users")
-	public ResponseEntity<List<User>> getUsers(){
-		return ResponseEntity.ok().body(userService.getUsers());
+	public ResponseEntity<Page<User>> getUsers(@RequestParam(defaultValue = "") String adName,
+											   @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
+											   @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
+											   @RequestParam(defaultValue = "id") String sortBy){
+		return ResponseEntity.ok().body(userService.getUsers(adName, pageNo, pageSize, sortBy));
 	}
 
 	@PostMapping("/users/save")
@@ -55,8 +59,8 @@ public class UserController {
 	}
 
 	@PostMapping("/role/addtouser")
-	public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form){
-		userService.addRoleToUse(form.getUsername(), form.getRolename());
+	public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserFormDto form){
+		userService.addRoleToUse(form.getEmail(), form.getRolename());
 		return ResponseEntity.ok().build();
 	}
 
@@ -99,10 +103,3 @@ public class UserController {
 		}
 	}
 }
-
-@Data
-class RoleToUserForm {
-	private String username;
-	private String rolename;
-}
-

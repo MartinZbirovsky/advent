@@ -1,8 +1,9 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Role;
 import advent.repository.RoleRepository;
-import advent.service.serviceinterface.RoleService;
+import advent.service.Interface.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +14,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Service
-public class RoleServiceImpl implements RoleService<Role> {
+@RequiredArgsConstructor
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
-
-    public RoleServiceImpl(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
 
     @Override
     @Transactional
@@ -60,5 +58,15 @@ public class RoleServiceImpl implements RoleService<Role> {
                 .orElseThrow(() -> new EntityNotFoundException("Role " + roleId + "not found"));
         roleRepository.deleteById(role.getId());
         return role;
+    }
+
+    @Override
+    public Role save(Role role) {
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public Role findByName(String name) {
+        return roleRepository.findByName(name);
     }
 }

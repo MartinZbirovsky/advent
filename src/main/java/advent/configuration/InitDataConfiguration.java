@@ -1,16 +1,10 @@
 package advent.configuration;
 
 import advent.model.*;
-import advent.repository.AdsRepository;
-import advent.repository.RoleRepository;
-import advent.service.UserServiceImpl;
-import advent.service.serviceinterface.UserService;
+import advent.service.Interface.UserService;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
 
@@ -25,10 +19,10 @@ public class InitDataConfiguration {
             userService.saveRole(new Role(null, "ROLE_ADMIN"));
             userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
 
-            userService.saveUser(new User(null,"j","j", "j", new ArrayList<>()));
-            userService.saveUser(new User(null,"a","a", "a", new ArrayList<>()));
-            userService.saveUser(new User(null,"b","b", "b", new ArrayList<>()));
-            userService.saveUser(new User(null,"c","c", "c", new ArrayList<>()));
+            userService.saveUser(new User(null,"j","j", "j", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"a","a", "a", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"b","b", "b", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"c","c", "c", new HashSet<>(), null, null));
 
             userService.addRoleToUse("j", "ROLE_USER");
             userService.addRoleToUse("a", "ROLE_MANAGER");
@@ -70,7 +64,7 @@ public class InitDataConfiguration {
             newUser.setFirstAddress(address);
             newUser.setRoles(roles);
 
-            List<Ads> newAds = new ArrayList<>();
+            List<Ads> newAds = new HashSet<>();
             newAds.add(new Ads("JAVA"));
             newAds.add(new Ads("C#"));
 

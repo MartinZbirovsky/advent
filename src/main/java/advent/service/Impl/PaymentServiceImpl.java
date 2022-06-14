@@ -1,8 +1,8 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Payment;
 import advent.repository.PaymentRepository;
-import advent.service.serviceinterface.PaymentService;
+import advent.service.Interface.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +14,7 @@ import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequiredArgsConstructor
-public class PaymentServiceImpl implements PaymentService<Payment> {
+public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
 

@@ -43,7 +43,7 @@ public class UserDetail {
     public Address secondAddress;
 
     @Min(0)
-    public BigDecimal currentMoney;
+    public BigDecimal currentMoney = new BigDecimal(0);
 
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
@@ -52,4 +52,23 @@ public class UserDetail {
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
     public Date modifiedAt;
+
+    /*
+	@NotNull
+	private boolean isAccountNonExpired = true;
+	@NotNull
+	private boolean isAccountNonLocked = true;
+	@NotNull
+	private boolean isCredentialsNonExpired = true;
+	@NotNull
+	private boolean isEnabled = true;
+	public void addRole(Role role) { this.roles.add(role); }
+	public void removeRole(Role role) { this.roles.remove(role); }
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		for (Role role : roles) {
+			authorities.add(new SimpleGrantedAuthority(role.getName()));
+		}
+		return authorities;
+	}*/
 }

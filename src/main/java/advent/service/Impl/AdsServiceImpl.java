@@ -1,10 +1,13 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Ads;
 import advent.model.Benefit;
 import advent.model.Category;
 import advent.repository.AdsRepository;
-import advent.service.serviceinterface.AdsService;
+import advent.service.Interface.AdsService;
+import advent.service.Interface.BenefitService;
+import advent.service.Interface.CategoryService;
+import advent.service.Interface.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,12 +20,12 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AdsServiceImpl implements AdsService<Ads> {
+public class AdsServiceImpl implements AdsService{
 
     private final AdsRepository adsRepository;
-    private final CategoryServiceImpl catService;
-    private final UserServiceImpl userService;
-    private final BenefitServiceImpl benefitService;
+    private final CategoryService categoryService;
+    private final UserService userService;
+    private final BenefitService benefitService;
 
     @Transactional
     public Ads addNew(Ads entityBody) {
@@ -92,7 +95,7 @@ public class AdsServiceImpl implements AdsService<Ads> {
     public Ads addCategory(Long categoryId, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
-        Category category = catService.get(categoryId);
+        Category category = categoryService.get(categoryId);
         ads.setCategory(category);
 
         return adsRepository.save(ads);

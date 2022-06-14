@@ -1,8 +1,8 @@
-package advent.service;
+package advent.service.Impl;
 
 import advent.model.Address;
 import advent.repository.AddressRepository;
-import advent.service.serviceinterface.AddressService;
+import advent.service.Interface.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl implements AddressService<Address> {
+public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
 
