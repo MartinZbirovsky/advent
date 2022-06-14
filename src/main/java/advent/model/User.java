@@ -1,5 +1,6 @@
 package advent.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -15,6 +16,23 @@ import java.util.*;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private String name;
+	private String username;
+	private String password;
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Collection<Role> roles= new ArrayList<>();
+}
+
+
+/*
+@Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
@@ -23,13 +41,7 @@ public class User extends UserDetail implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Length(min = 0, max = 50)
-	public String fistName;
 
-	@Length(min = 0, max = 50)
-	public String secondName;
-
-	public String companyName = "";
 
 	@Column(nullable = false, length = 50, unique = true)
 	@Email
@@ -101,3 +113,4 @@ public class User extends UserDetail implements UserDetails {
 		return this.isEnabled;
 	}
 }
+*/

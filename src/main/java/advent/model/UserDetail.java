@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -24,6 +25,15 @@ import static javax.persistence.FetchType.EAGER;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetail {
+
+    @Length(min = 0, max = 50)
+    public String fistName;
+
+    @Length(min = 0, max = 50)
+    public String secondName;
+
+    public String companyName = "";
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = EAGER)
     @JoinColumn(name = "first_address_id")
     public Address firstAddress;

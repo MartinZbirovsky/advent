@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Mapper {
 
-    public UserCreateDto userToCreateDto(User user) {
+   /* public UserCreateDto userToCreateDto(User user) {
         UserCreateDto userCreateDto = new UserCreateDto();
         userCreateDto.setId(user.getId());
         userCreateDto.setEmail(user.getEmail());
@@ -21,5 +21,5 @@ public class Mapper {
         userCreateDtoRes.setEmail(user.getEmail());
         userCreateDtoRes.setAddress(user.getFirstAddress());
         return userCreateDtoRes;
-    }
+    }*/
 }

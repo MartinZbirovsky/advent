@@ -4,6 +4,7 @@ import advent.model.*;
 import advent.repository.AdsRepository;
 import advent.repository.RoleRepository;
 import advent.service.UserServiceImpl;
+import advent.service.serviceinterface.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -17,11 +18,32 @@ import java.util.*;
 public class InitDataConfiguration {
 
     @Bean
+    CommandLineRunner run (UserService userService){
+        return args -> {
+            userService.saveRole(new Role(null, "ROLE_USER"));
+            userService.saveRole(new Role(null, "ROLE_MANAGER"));
+            userService.saveRole(new Role(null, "ROLE_ADMIN"));
+            userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+
+            userService.saveUser(new User(null,"j","j", "j", new ArrayList<>()));
+            userService.saveUser(new User(null,"a","a", "a", new ArrayList<>()));
+            userService.saveUser(new User(null,"b","b", "b", new ArrayList<>()));
+            userService.saveUser(new User(null,"c","c", "c", new ArrayList<>()));
+
+            userService.addRoleToUse("j", "ROLE_USER");
+            userService.addRoleToUse("a", "ROLE_MANAGER");
+            userService.addRoleToUse("b", "ROLE_ADMIN");
+            userService.addRoleToUse("c", "ROLE_SUPER_ADMIN");
+        };
+    }
+
+    /*
+    @Bean
     CommandLineRunner commandLineRunner(AdsRepository aRepo,
                                         RoleRepository rRepo,
                                         UserServiceImpl uService){
         return args -> {
-         /* ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
+            ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
             User newUser = context.getBean("newuser", User.class);
             String email = "1@1.cz";
 
@@ -77,9 +99,9 @@ public class InitDataConfiguration {
             List<Ads> allADs = aRepo.findAll();
             allADs.forEach(e -> e.setUser(user));
 
-            aRepo.saveAll(allADs);*/
+            aRepo.saveAll(allADs);
         };
-    }
+    }*/
 }
 
 //@JsonIgnore

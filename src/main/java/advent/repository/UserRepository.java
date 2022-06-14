@@ -10,7 +10,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+	User findByUsername(String username);
+}
+/*
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);
 	Page<User> findByEmailContaining(String email, Pageable pageable);
 
-}
+}*/
