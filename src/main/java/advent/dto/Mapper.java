@@ -1,8 +1,5 @@
 package advent.dto;
 
-import advent.dto.requestDto.UserDetailDto;
-import advent.dto.responseDto.UserCreateDto;
-import advent.model.User;
 import org.springframework.stereotype.Component;
 
 @Component

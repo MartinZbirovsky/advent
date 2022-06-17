@@ -8,18 +8,21 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.security.Principal;
+import java.util.Set;
+
 import static advent.configuration.Constants.PAGE_NUMBER;
 import static advent.configuration.Constants.PAGE_SIZE;
 
 @RestController
-@RequestMapping("/api/ads")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:8081")
 public class AdsController{
 
     private final AdsService adsService;
 
-    @GetMapping("")
+    @GetMapping("/ads")
     //@RolesAllowed(Role.AUTHOR_ADMIN)
     //@PreAuthorize("hasAnyRole('ADMIN')")
     public Page<Ads> getAds (
@@ -31,48 +34,43 @@ public class AdsController{
         return adsService.getAll(adName, categoryId, pageNo, pageSize, sortBy);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/ads/{id}")
     public Ads getAdsById (@PathVariable Long id){
         return adsService.get(id);
     }
 
-    @PostMapping("")
-    public Ads addAds (@Valid @RequestBody Ads ads){
-        return adsService.addNew(ads);
+    @PostMapping("/ads")
+    public Ads addAds (@Valid @RequestBody Ads ads, Principal principal){
+        return adsService.addNew(ads, principal.getName());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/ads/{id}")
     public Ads editAds(@PathVariable Long id, @Valid @RequestBody Ads ads) {
         return adsService.edit(id, ads);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/ads/{id}")
     public Ads deleteAds(@PathVariable Long id) {
         return adsService.delete(id);
     }
 
-    @PostMapping("/addCategory/{categoryId}/toAds/{adsId}")
-    public Ads addCategory(@PathVariable Long categoryId, @PathVariable Long adsId) {
-        return adsService.addCategory(categoryId, adsId);
+    @PostMapping("/ads/addCategory/{categoryName}/toAds/{adsId}")
+    public Ads addCategory(@PathVariable String categoryName, @PathVariable Long adsId) {
+        return adsService.addCategory(categoryName, adsId);
     }
 
-   /* @GetMapping("/allMyAds/${id}")
-    public List<Ads> allMyAds (Long id) {
-      return adsService.getById(id);
-    };*/
-
-    @PostMapping("/removeCategory/{adsId}")
-    public Ads removeCategory(@PathVariable Long adsId) {
-        return adsService.removeCategory(adsId);
-    }
-
-    @PostMapping("/addBenefit/{benefitId}/toAds/{adsId}")
+    @PostMapping("/ads/addBenefit/{benefitId}/toAds/{adsId}")
     public Ads addBenefit(@PathVariable Long benefitId, @PathVariable Long adsId) {
         return adsService.addBenefit(benefitId, adsId);
     }
 
-    @PostMapping("/removeBenefit/{benefitId}/fromAds/{adsId}")
+    @PostMapping("/ads/removeBenefit/{benefitId}/fromAds/{adsId}")
     public Ads removeBenefit(@PathVariable Long benefitId, @PathVariable Long adsId) {
         return adsService.removeBenefit(benefitId, adsId);
     }
+
+        /*@GetMapping("/ads/myads")
+    public Set<Ads> allMyAds (Principal principal) {
+      return adsService.getAllMyAds(principal.getName());
+    };*/
 }

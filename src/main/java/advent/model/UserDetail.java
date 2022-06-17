@@ -6,17 +6,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
 
@@ -27,31 +21,31 @@ import static javax.persistence.FetchType.EAGER;
 public class UserDetail {
 
     @Length(min = 0, max = 50)
-    public String fistName;
+    protected String fistName;
 
     @Length(min = 0, max = 50)
-    public String secondName;
+    protected String secondName;
 
-    public String companyName = "";
+    protected String companyName = "";
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = EAGER)
     @JoinColumn(name = "first_address_id")
-    public Address firstAddress;
+    protected Address firstAddress;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = EAGER)
     @JoinColumn(name = "second_address_id")
-    public Address secondAddress;
+    protected Address secondAddress;
 
     @Min(0)
-    public BigDecimal currentMoney = new BigDecimal(0);
+    protected BigDecimal currentMoney = new BigDecimal(0);
 
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
-    public Date createdAt;
+    protected Date createdAt;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
-    public Date modifiedAt;
+    protected Date modifiedAt;
 
     /*
 	@NotNull
@@ -62,9 +56,9 @@ public class UserDetail {
 	private boolean isCredentialsNonExpired = true;
 	@NotNull
 	private boolean isEnabled = true;
-	public void addRole(Role role) { this.roles.add(role); }
-	public void removeRole(Role role) { this.roles.remove(role); }
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	protected void addRole(Role role) { this.roles.add(role); }
+	protected void removeRole(Role role) { this.roles.remove(role); }
+	protected Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		for (Role role : roles) {
 			authorities.add(new SimpleGrantedAuthority(role.getName()));

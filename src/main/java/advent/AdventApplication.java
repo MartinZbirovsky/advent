@@ -20,10 +20,4 @@ public class AdventApplication extends SpringBootServletInitializer {
 	PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
 	};
-
-	// na co to je?
-	@Override
-	protected SpringApplicationBuilder configure (SpringApplicationBuilder builder) {
-		return builder.sources(AdventApplication.class);
-	}
 }

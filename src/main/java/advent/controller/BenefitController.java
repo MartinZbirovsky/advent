@@ -1,5 +1,6 @@
 package advent.controller;
 
+import advent.model.Ads;
 import advent.model.Benefit;
 import advent.service.Impl.BenefitServiceImpl;
 import advent.service.Interface.BenefitService;
@@ -20,9 +21,9 @@ public class BenefitController {
         this.benefitService = BenefitServiceImpl;
     }
 
-    @GetMapping("/{id}")
-    public Benefit getBenefit(@PathVariable long id){
-        return benefitService.get(id);
+    @GetMapping("/{benefitName}")
+    public Benefit getBenefitByName(@PathVariable String benefitName){
+        return benefitService.getBenefitByName(benefitName);
     }
 
     @GetMapping("")
@@ -32,13 +33,18 @@ public class BenefitController {
         return benefitService.getAll(pageNo, pageSize, sortBy);
     }
 
+    @PutMapping("/{id}")
+    public Benefit editBenefit(@PathVariable Long id, @Valid @RequestBody Benefit benefit) {
+        return benefitService.edit(id, benefit);
+    }
+
     @PostMapping("")
     public Benefit createBenefit (@RequestBody @Valid Benefit benefit){
         return benefitService.addNew(benefit);
     }
 
-    @DeleteMapping("/{id}")
-    public Benefit deleteBenefit(@PathVariable long id){
-        return benefitService.delete(id);
+    @DeleteMapping("/{benefitName}")
+    public Benefit deleteBenefit(@PathVariable String benefitName){
+        return benefitService.delete(benefitName);
     }
 }

@@ -32,6 +32,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category findByName(String categoryName) {
+        return categoryRepository.findByName(categoryName);
+    }
+
+    @Override
     public Category get(Long categoryId) {
        return categoryRepository.findById(categoryId)
                .orElseThrow(() -> new EntityNotFoundException("Category " + categoryId + "not found"));
@@ -42,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category delete(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category " + categoryId + " not found"));
-        category.getAds().forEach(ads -> ads.setCategory(null));
+        //category.getAds().forEach(ads -> ads.setCategory(null));
         categoryRepository.save(category);
         categoryRepository.delete(category);
         return category;

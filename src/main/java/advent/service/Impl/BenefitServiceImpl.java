@@ -37,6 +37,12 @@ public class BenefitServiceImpl implements BenefitService {
     }
 
     @Override
+    public Benefit getBenefitByName(String benefitName) {
+        Benefit benefit =  benefitRepository.findByName(benefitName);
+        return benefit;
+    }
+
+    @Override
     @Transactional
     public Benefit edit(Long entityId, Benefit benefit) {
         return benefitRepository.findById(entityId)
@@ -52,9 +58,8 @@ public class BenefitServiceImpl implements BenefitService {
 
     @Override
     @Transactional
-    public Benefit delete(Long benefitId) {
-        Benefit benefit = benefitRepository.findById(benefitId)
-                .orElseThrow(() -> new EntityNotFoundException("Address " + benefitId + " not found"));
+    public Benefit delete(String benefitName) {
+        Benefit benefit = benefitRepository.findByName(benefitName);
         benefitRepository.deleteById(benefit.getId());
         return benefit;
     }

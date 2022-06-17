@@ -1,10 +1,10 @@
 package advent.service.Impl;
 
 import advent.dto.Mapper;
-import advent.dto.requestDto.UserDetailDto;
+import advent.dto.requestDto.RoleUserDto;
+import advent.dto.responseDto.RoleUserResDto;
 import advent.model.Role;
 import advent.model.User;
-import advent.repository.RoleRepository;
 import advent.repository.UserRepository;
 import advent.service.Interface.RoleService;
 import advent.service.Interface.UserService;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.getRoles().forEach(role -> {
 			autorities.add(new SimpleGrantedAuthority(role.getName()));
 		});
-		return new org.springframework.security.core.userdetails.User (user.getUsername(), user.getPassword(), autorities );
+		return new org.springframework.security.core.userdetails.User (user.getEmail(), user.getPassword(), autorities);
 	}
 	@Override
 	public User saveUser(User user) {
@@ -61,22 +61,57 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
+	public User editUser(User user) {
+		User userToUpdate = userRepo.findByEmail(user.getEmail());
+
+		if(userToUpdate == null) {
+			new EntityNotFoundException("Email " + userToUpdate.getEmail() + " not found");
+		} else {
+			userToUpdate.setEmail(user.getEmail());
+			userToUpdate.setFirstAddress(user.getFirstAddress());
+			userToUpdate.setSecondAddress(user.getSecondAddress());
+			userToUpdate.setCompanyName(user.getCompanyName());
+		}
+		return userRepo.save(userToUpdate);
+	}
+
+	@Override
 	public Role saveRole(Role role) {
 		log.info("save role {}", role.getName());
 		return roleService.save(role);
 	}
 
 	@Override
-	public void addRoleToUse(String userName, String roleName) {
-		User user = userRepo.findByEmail(userName);
+	public RoleUserResDto addRoleToUse(String userEmail, String roleName) {
+		User user = userRepo.findByEmail(userEmail);
 		Role role = roleService.findByName(roleName);
+
+		if(user == null)
+			new EntityNotFoundException("Email " + userEmail + " not found");
+
+		if(role == null)
+			new EntityNotFoundException("Role " + roleName + " not found");
 		user.getRoles().add(role);
+
+		return new RoleUserResDto(user.getEmail(), role.getName(), "Role added.");
+	}
+
+	@Override
+	public RoleUserResDto removeRole(RoleUserDto form) {
+		User user = userRepo.findByEmail(form.getEmail());
+		if(user == null)
+			new EntityNotFoundException("Email " + form.getEmail() + " not found");
+
+		Role role = roleService.findByName(form.getRolename());
+		if(role == null)
+			new EntityNotFoundException("Role  " + form.getRolename() + " not found");
+
+		return new RoleUserResDto(user.getEmail(), role.getName(), "Role removed.");
 	}
 
 	@Override
 	public User getUser(String email) {
 		return userRepo.findByEmail(email);
-				//.orElseThrow(() -> new EntityNotFoundException("User" + email + "not found"));
 	}
 
 	@Override
@@ -87,36 +122,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				: userRepo.findByEmailContaining(email, paging);
 	}
 
-	public User getById(Long userId) {
-		return userRepo.findById(userId)
-				.orElseThrow(() -> new EntityNotFoundException("User" + userId + "not found"));
-	}
-
-	public User deleteById(String email) {
+	@Override
+	public User deleteUserByEmail(String email) {
 		User user = userRepo.findByEmail(email);
 		if(user == null)
 			new EntityNotFoundException("Email" + email + " not found");
 
-		userRepo.deleteById(user.getId());
+		userRepo.delete(user);
 		return user;
-	}
-
-	public User editById(Long userId, UserDetailDto entityBody) {
-		User user = userRepo.findById(userId)
-				.orElseThrow(() -> new EntityNotFoundException("User" + userId + "not found"));
-
-		user.setEmail(entityBody.getEmail());
-		user.getFirstAddress().setCity(entityBody.getAddress().getCity());
-		user.getFirstAddress().setStreet(entityBody.getAddress().getStreet());
-		return userRepo.save(user);
-	}
-
-	public User removeRole(String roleName, Long userId) {
-		User user = userRepo.findById(userId)
-				.orElseThrow(() -> new EntityNotFoundException("User" + userId + "not found"));
-		Role role = roleService.findByName(roleName);
-				//.orElseThrow(() -> new EntityNotFoundException("Role" + userId + "not found"));;
-		user.getRoles().remove(role);
-		return userRepo.save(user);
 	}
 }

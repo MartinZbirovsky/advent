@@ -4,6 +4,6 @@ package advent.configuration;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class CustomBeans {
+public class BeansConfig {
 
 }

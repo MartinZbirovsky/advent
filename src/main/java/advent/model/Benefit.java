@@ -17,19 +17,11 @@ public class Benefit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     @NotEmpty
     @Length(min = 3, max = 30)
+    @Column(unique=true)
     private String name;
     @Lob
     private byte[] icon;
-
-    public Benefit(String name) {
-        this.name = name;
-    }
-
-    public Benefit(String name, byte[] icon, List<Ads> ads) {
-        this.name = name;
-        this.icon = icon;
-    }
 }

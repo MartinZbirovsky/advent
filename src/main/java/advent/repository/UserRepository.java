@@ -1,7 +1,5 @@
 package advent.repository;
 
-import java.util.Optional;
-
 import advent.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -17,11 +17,6 @@ public class Address {
     @Length(min = 1, max = 85)
     private String city;
 
-    public Address(String street, String city){
-        this.street = street;
-        this.city = city;
-    }
-
     public Long getId() {
         return id;
     }

@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 public interface BenefitService {
     Benefit addNew(Benefit entityBody);
     Page<Benefit> getAll(int pageNo, int pageSize, String sortBy);
-    Benefit get(Long entityId);
+    Benefit get(Long id);
+    Benefit getBenefitByName(String benefitName);
     Benefit edit(Long entityId, Benefit entityBody);
-    Benefit delete(Long entityId);
+    Benefit delete(String benefitName);
 }

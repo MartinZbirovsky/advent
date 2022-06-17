@@ -4,16 +4,17 @@ import advent.model.Ads;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public interface AdsService{
-    Ads addNew(Ads entityBody);
+    Ads addNew(Ads ads, String principalName);
     Page<Ads> getAll(int pageNo, int pageSize, String sortBy);
     Ads get(Long entityId);
     Ads edit(Long entityId, Ads entityBody);
     Ads delete(Long entityId);
     Page<Ads> getAll(String adName, Long category, int pageNo, int pageSize, String sortBy);
-    public Ads addCategory( Long categoryId, Long adsId);
-    public Ads removeCategory( Long adsId);
+    public Ads addCategory(String categoryName, Long adsId);
     public Ads addBenefit(Long benefitId, Long adsId);
-    public Ads removeBenefit( Long benefitId, Long adsId);
+    public Ads removeBenefit(Long benefitId, Long adsId);
 }

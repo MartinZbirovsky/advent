@@ -3,12 +3,13 @@ package advent.model;
 import advent.enums.stateAds;
 import advent.enums.workTypeAds;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Ads {
 
     @Id
@@ -48,12 +50,11 @@ public class Ads {
     @Enumerated(EnumType.STRING)
     private stateAds state = stateAds.ACTIVE;
 
-    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name= "category_id")
+    Category category;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinTable(
             name = "ads_benefits",
             joinColumns = @JoinColumn(name = "ads_id"),
@@ -63,6 +64,7 @@ public class Ads {
 
     @ManyToOne
     @JoinColumn(name="id_user")
+    /*@JsonIgnore*/
     private User user;
 
     @CreationTimestamp
@@ -72,11 +74,7 @@ public class Ads {
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
     private Date modifiedAt;
-
-    public Ads(String name) {
-        this.name = name;
-    }
-
+    
     public void addBenefit (Benefit benefit){
         this.benefits.add(benefit);
     }

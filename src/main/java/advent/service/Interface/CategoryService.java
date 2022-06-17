@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public interface CategoryService{
     Category addNew(Category entityBody);
     Page<Category> getAll(int pageNo, int pageSize, String sortBy);
+    Category findByName(String categoryName);
     Category get(Long entityId);
     Category edit(Long entityId, Category entityBody);
     Category delete(Long entityId);

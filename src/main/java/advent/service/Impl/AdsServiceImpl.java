@@ -3,12 +3,14 @@ package advent.service.Impl;
 import advent.model.Ads;
 import advent.model.Benefit;
 import advent.model.Category;
+import advent.model.User;
 import advent.repository.AdsRepository;
+import advent.repository.UserRepository;
 import advent.service.Interface.AdsService;
 import advent.service.Interface.BenefitService;
 import advent.service.Interface.CategoryService;
-import advent.service.Interface.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,23 +19,24 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdsServiceImpl implements AdsService{
 
     private final AdsRepository adsRepository;
     private final CategoryService categoryService;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final BenefitService benefitService;
 
     @Transactional
-    public Ads addNew(Ads entityBody) {
-        /*  User user= (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ads.setUser(user);*/
-       // User neco = userService.findByEmail("neco@neco.cz");
-      //  entityBody.setUser(neco);
-        return adsRepository.save(entityBody);
+    public Ads addNew(Ads ads, String principalName) {
+        log.info("save role {}", principalName);
+        User actualUser = userRepository.findByEmail(principalName);
+        ads.setUser(actualUser);
+        return adsRepository.save(ads);
     }
 
     @Override
@@ -48,8 +51,7 @@ public class AdsServiceImpl implements AdsService{
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         if(!adName.isEmpty() && categoryId != 0){
-            ads = adsRepository.findByNameContaining(adName, paging);
-            System.out.println("LOOOL");
+            ads = adsRepository.findByCategory(adName, categoryId, paging);
         }
         else if (!adName.isEmpty() && categoryId == 0){
             ads = adsRepository.findByNameContaining(adName, paging);
@@ -92,20 +94,11 @@ public class AdsServiceImpl implements AdsService{
     }
 
     @Transactional
-    public Ads addCategory(Long categoryId, Long adsId) {
+    public Ads addCategory(String categoryName, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
-        Category category = categoryService.get(categoryId);
+        Category category = categoryService.findByName(categoryName);
         ads.setCategory(category);
-
-        return adsRepository.save(ads);
-    }
-
-    @Transactional
-    public Ads removeCategory(Long adsId) {
-        Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
-        ads.setCategory(null);
 
         return adsRepository.save(ads);
     }
@@ -131,4 +124,11 @@ public class AdsServiceImpl implements AdsService{
 
         return adsRepository.save(ads);
     }
+/*
+    @Override
+    public Set<Ads> getAllMyAds(String principalName) {
+        User actualUser = userRepository.findByEmail(principalName);
+
+        return actualUser.getAds();
+    }*/
 }
