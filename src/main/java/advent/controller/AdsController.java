@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.security.Principal;
-import java.util.Set;
 
 import static advent.configuration.Constants.PAGE_NUMBER;
 import static advent.configuration.Constants.PAGE_SIZE;
@@ -23,8 +22,6 @@ public class AdsController{
     private final AdsService adsService;
 
     @GetMapping("/ads")
-    //@RolesAllowed(Role.AUTHOR_ADMIN)
-    //@PreAuthorize("hasAnyRole('ADMIN')")
     public Page<Ads> getAds (
             @RequestParam(defaultValue = "") String adName,
             @RequestParam(defaultValue = "0") Long categoryId,
@@ -41,7 +38,7 @@ public class AdsController{
 
     @PostMapping("/ads")
     public Ads addAds (@Valid @RequestBody Ads ads, Principal principal){
-        return adsService.addNew(ads, principal.getName());
+        return adsService.addNew(ads, "5neco@neco.cz"/*principal.getName()*/);
     }
 
     @PutMapping("/ads/{id}")

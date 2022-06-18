@@ -1,5 +1,6 @@
 package advent.model;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
+@Data
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,28 +18,4 @@ public class Address {
 
     @Length(min = 1, max = 85)
     private String city;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
 }

@@ -22,6 +22,4 @@ public class Benefit {
     @Length(min = 3, max = 30)
     @Column(unique=true)
     private String name;
-    @Lob
-    private byte[] icon;
 }

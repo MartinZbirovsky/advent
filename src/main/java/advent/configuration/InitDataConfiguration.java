@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.*;
 
@@ -23,11 +24,11 @@ public class InitDataConfiguration {
             userService.saveRole(new Role(null, "ROLE_ADMIN"));
             userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
 
-            userService.saveUser(new User(null,"1neco@neco.cz","j", "neco", new HashSet<>(), null));
-            userService.saveUser(new User(null,"2neco@neco.cz","a", "neco", new HashSet<>(), null));
-            userService.saveUser(new User(null,"3neco@neco.cz","b", "neco", new HashSet<>(), null));
-            userService.saveUser(new User(null,"4neco@neco.cz","c", "neco", new HashSet<>(), null));
-            userService.saveUser(new User(null,"5neco@neco.cz","neco", "neco", new HashSet<>(), null));
+            userService.saveUser(new User(null,"1neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"2neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"3neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"4neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"5neco@neco.cz", "neco", new HashSet<>(), null, new BigDecimal(200)));
 
             userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
             userService.addRoleToUse("2neco@neco.cz", "ROLE_MANAGER");
@@ -35,17 +36,17 @@ public class InitDataConfiguration {
             userService.addRoleToUse("4neco@neco.cz", "ROLE_SUPER_ADMIN");
             userService.addRoleToUse("5neco@neco.cz", "ROLE_ADMIN");
 
-            categoryService.addNew(new Category(null, "IT"));
-            categoryService.addNew(new Category(null, "AUTO"));
-            categoryService.addNew(new Category(null, "ECO"));
+            categoryService.addNew(new Category(null, "IT", null));
+            categoryService.addNew(new Category(null, "AUTO", null));
+            categoryService.addNew(new Category(null, "ECO", null));
 
             adsService.addNew(new Ads(null,"neco", null, null, "Apple",5000L,
                     null,null, null, null, null, null, null, null, null)
                     , "5neco@neco.cz");
 
-            benefitService.addNew(new Benefit(null, "007", null));
-            benefitService.addNew(new Benefit(null, "Home", null));
-            benefitService.addNew(new Benefit(null, "Vegetable", null));
+            benefitService.addNew(new Benefit(null, "007"));
+            benefitService.addNew(new Benefit(null, "Home"));
+            benefitService.addNew(new Benefit(null, "Vegetable"));
 
         };
     }

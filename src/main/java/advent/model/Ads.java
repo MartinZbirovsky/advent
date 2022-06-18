@@ -12,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.HashSet;
@@ -38,8 +40,11 @@ public class Ads {
     private String requirements;
 
     private String companyOffer;
-    private Long minSalary;
-    private Long maxSalary;
+
+    @Min(0)
+    private Long salaryFrom;
+    @Min(0)
+    private Long salaryTo;
 
     @Length(min = 0, max = 150)
     private String officePlace;
@@ -50,9 +55,9 @@ public class Ads {
     @Enumerated(EnumType.STRING)
     private stateAds state = stateAds.ACTIVE;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name= "category_id")
-    Category category;
+    private Category category;
 
     @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinTable(
@@ -64,7 +69,6 @@ public class Ads {
 
     @ManyToOne
     @JoinColumn(name="id_user")
-    /*@JsonIgnore*/
     private User user;
 
     @CreationTimestamp

@@ -13,7 +13,7 @@ import static advent.configuration.Constants.PAGE_NUMBER;
 import static advent.configuration.Constants.PAGE_SIZE;
 
 @RestController()
-@RequestMapping("/api/benefits")
+@RequestMapping("/api")
 public class BenefitController {
 
     private final BenefitService benefitService;
@@ -21,29 +21,29 @@ public class BenefitController {
         this.benefitService = BenefitServiceImpl;
     }
 
-    @GetMapping("/{benefitName}")
+    @GetMapping("/benefits/{benefitName}")
     public Benefit getBenefitByName(@PathVariable String benefitName){
         return benefitService.getBenefitByName(benefitName);
     }
 
-    @GetMapping("")
+    @GetMapping("/benefits")
     public Page<Benefit> getBenefits(@RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
                                      @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
                                      @RequestParam(defaultValue = "id") String sortBy){
         return benefitService.getAll(pageNo, pageSize, sortBy);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/benefits/{id}")
     public Benefit editBenefit(@PathVariable Long id, @Valid @RequestBody Benefit benefit) {
         return benefitService.edit(id, benefit);
     }
 
-    @PostMapping("")
+    @PostMapping("/benefits")
     public Benefit createBenefit (@RequestBody @Valid Benefit benefit){
         return benefitService.addNew(benefit);
     }
 
-    @DeleteMapping("/{benefitName}")
+    @DeleteMapping("/benefits/{benefitName}")
     public Benefit deleteBenefit(@PathVariable String benefitName){
         return benefitService.delete(benefitName);
     }

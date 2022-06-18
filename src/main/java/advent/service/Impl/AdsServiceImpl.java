@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.Set;
+import java.math.BigDecimal;
+
+import static advent.configuration.Constants.ADS_PRICE;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +35,18 @@ public class AdsServiceImpl implements AdsService{
 
     @Transactional
     public Ads addNew(Ads ads, String principalName) {
-        log.info("save role {}", principalName);
         User actualUser = userRepository.findByEmail(principalName);
+
+        log.info("Current money: " + actualUser.getCurrentMoney());
+        if(actualUser.getCurrentMoney().compareTo(ADS_PRICE) == -1){
+            throw new RuntimeException("No money");
+        }else {
+            actualUser.setCurrentMoney(actualUser.getCurrentMoney().add(new BigDecimal("-10")));
+            userRepository.save(actualUser);
+            log.info("Current money REDUCED: " + actualUser.getCurrentMoney());
+        }
+
+        log.info("ASSIGN PRINCIPAL TO ADS " + principalName);
         ads.setUser(actualUser);
         return adsRepository.save(ads);
     }
@@ -47,7 +59,7 @@ public class AdsServiceImpl implements AdsService{
 
     @Override
     public Page<Ads> getAll(String adName, Long categoryId, int pageNo, int pageSize, String sortBy) {
-        Page<Ads> ads = null;
+        Page<Ads> ads;
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         if(!adName.isEmpty() && categoryId != 0){

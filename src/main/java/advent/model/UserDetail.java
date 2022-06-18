@@ -8,8 +8,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import static javax.persistence.FetchType.EAGER;
@@ -20,12 +18,13 @@ import static javax.persistence.FetchType.EAGER;
 @AllArgsConstructor
 public class UserDetail {
 
-    @Length(min = 0, max = 50)
+    @Length(min = 0, max = 30)
+    protected String publisherName;
+    @Length(min = 0, max = 30)
     protected String fistName;
-
-    @Length(min = 0, max = 50)
+    @Length(min = 0, max = 30)
     protected String secondName;
-
+    @Length(min = 0, max = 80)
     protected String companyName = "";
 
     @OneToOne(cascade = CascadeType.ALL, fetch = EAGER)
@@ -36,8 +35,8 @@ public class UserDetail {
     @JoinColumn(name = "second_address_id")
     protected Address secondAddress;
 
-    @Min(0)
-    protected BigDecimal currentMoney = new BigDecimal(0);
+    @Lob
+    private byte[] companyLogo;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
@@ -46,23 +45,4 @@ public class UserDetail {
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
     protected Date modifiedAt;
-
-    /*
-	@NotNull
-	private boolean isAccountNonExpired = true;
-	@NotNull
-	private boolean isAccountNonLocked = true;
-	@NotNull
-	private boolean isCredentialsNonExpired = true;
-	@NotNull
-	private boolean isEnabled = true;
-	protected void addRole(Role role) { this.roles.add(role); }
-	protected void removeRole(Role role) { this.roles.remove(role); }
-	protected Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		for (Role role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-		}
-		return authorities;
-	}*/
 }

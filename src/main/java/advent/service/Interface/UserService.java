@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 public interface UserService {
     User saveUser(User user);
     User editUser (User user);
-    User getUser(String username);
+    User getUserByEmail(String username);
     Page<User> getUsers(String email, int pageNo, int pageSize, String sortBy);
     User deleteUserByEmail(String email);
     Role saveRole(Role role);
     RoleUserResDto addRoleToUse(String userEmail, String role);
     RoleUserResDto removeRole(RoleUserDto form);
-
 }

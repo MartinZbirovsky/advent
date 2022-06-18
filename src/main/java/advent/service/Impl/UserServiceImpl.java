@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.getRoles().forEach(role -> {
 			autorities.add(new SimpleGrantedAuthority(role.getName()));
 		});
-		return new org.springframework.security.core.userdetails.User (user.getEmail(), user.getPassword(), autorities);
+		return new org.springframework.security.core.userdetails.User (/*user.getUsername()*/ user.getEmail(), user.getPassword(), autorities );
 	}
 	@Override
 	public User saveUser(User user) {
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User userToUpdate = userRepo.findByEmail(user.getEmail());
 
 		if(userToUpdate == null) {
-			new EntityNotFoundException("Email " + userToUpdate.getEmail() + " not found");
+			throw new EntityNotFoundException("Email not found");
 		} else {
 			userToUpdate.setEmail(user.getEmail());
 			userToUpdate.setFirstAddress(user.getFirstAddress());
@@ -87,10 +88,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		Role role = roleService.findByName(roleName);
 
 		if(user == null)
-			new EntityNotFoundException("Email " + userEmail + " not found");
+			throw new EntityNotFoundException("Email " + userEmail + " not found");
 
 		if(role == null)
-			new EntityNotFoundException("Role " + roleName + " not found");
+			throw new EntityNotFoundException("Role " + roleName + " not found");
 		user.getRoles().add(role);
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role added.");
@@ -100,17 +101,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public RoleUserResDto removeRole(RoleUserDto form) {
 		User user = userRepo.findByEmail(form.getEmail());
 		if(user == null)
-			new EntityNotFoundException("Email " + form.getEmail() + " not found");
+			throw new EntityNotFoundException("Email " + form.getEmail() + " not found");
 
 		Role role = roleService.findByName(form.getRolename());
 		if(role == null)
-			new EntityNotFoundException("Role  " + form.getRolename() + " not found");
+			throw new EntityNotFoundException("Role  " + form.getRolename() + " not found");
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role removed.");
 	}
 
 	@Override
-	public User getUser(String email) {
+	public User getUserByEmail(String email) {
 		return userRepo.findByEmail(email);
 	}
 
@@ -126,9 +127,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User deleteUserByEmail(String email) {
 		User user = userRepo.findByEmail(email);
 		if(user == null)
-			new EntityNotFoundException("Email" + email + " not found");
+			throw new EntityNotFoundException("Email" + email + " not found");
 
 		userRepo.delete(user);
 		return user;
 	}
+
+
 }

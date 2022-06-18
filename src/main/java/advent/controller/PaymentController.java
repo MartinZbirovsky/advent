@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import static advent.configuration.Constants.PAGE_NUMBER;
 import static advent.configuration.Constants.PAGE_SIZE;
-// keep for testing purpose
 @RestController
 @RequestMapping("/api/pay")
 @RequiredArgsConstructor

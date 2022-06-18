@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.Arrays;
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,17 +19,20 @@ public class User extends UserDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@Column(nullable = false, length = 50, unique = true)
+
 	@Email
+	@Column(nullable = false, length = 50, unique = true)
 	private String email;
-	private String username;
+
 	@Column(nullable = false, length = 64)
 	private String password;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Role> roles= new HashSet<>();
+
 	@OneToMany(mappedBy="user")
 	private Set<Payment> payments = new HashSet<>();
-	/*@OneToMany(mappedBy="user")
-	private Set<Ads> ads;*/
-	// SOFT DELETE
+
+	@Min(0)
+	protected BigDecimal currentMoney = new BigDecimal(0);
 }
