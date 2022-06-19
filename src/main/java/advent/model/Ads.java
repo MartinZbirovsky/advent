@@ -2,8 +2,6 @@ package advent.model;
 
 import advent.enums.stateAds;
 import advent.enums.workTypeAds;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
@@ -71,6 +68,10 @@ public class Ads {
     @JoinColumn(name="id_user")
     private User user;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ads_id")
+    private Set<AdsResponse> response = new HashSet<>();
+
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
     private Date createdAt;
@@ -82,7 +83,6 @@ public class Ads {
     public void addBenefit (Benefit benefit){
         this.benefits.add(benefit);
     }
-
     public void removeBenefit (Benefit benefit) {
         this.benefits.remove(benefit);
     }

@@ -2,6 +2,7 @@ package advent.controller;
 
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
+import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import advent.service.Interface.UserService;
@@ -22,7 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,5 +127,10 @@ public class UserController {
 	@PostMapping("role/remove")
 	public RoleUserResDto removeRole(@Valid @RequestBody RoleUserDto form){
 		return userService.removeRole(form);
+	}
+
+	@PostMapping("/users/chargemoney")
+	public BigDecimal chargeMoney(@RequestBody Payment charge, Principal principal){
+		return userService.chargeMoney(/*principal.getName() */"5neco@neco.cz", charge);
 	}
 }

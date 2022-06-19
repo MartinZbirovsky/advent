@@ -3,6 +3,7 @@ package advent.service.Impl;
 import advent.dto.Mapper;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
+import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import advent.repository.UserRepository;
@@ -108,6 +109,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw new EntityNotFoundException("Role  " + form.getRolename() + " not found");
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role removed.");
+	}
+
+	@Override
+	public BigDecimal chargeMoney(String email, Payment payment) {
+		User updateUser = userRepo.findByEmail(email);
+		updateUser.getPayments().add(payment);
+		updateUser.setCurrentMoney(updateUser.getCurrentMoney().add(payment.getAmount()));
+		userRepo.save(updateUser);
+
+		return updateUser.getCurrentMoney();
 	}
 
 	@Override

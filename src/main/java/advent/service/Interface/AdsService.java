@@ -1,10 +1,9 @@
 package advent.service.Interface;
 
 import advent.model.Ads;
+import advent.model.AdsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public interface AdsService{
@@ -17,4 +16,5 @@ public interface AdsService{
     public Ads addCategory(String categoryName, Long adsId);
     public Ads addBenefit(Long benefitId, Long adsId);
     public Ads removeBenefit(Long benefitId, Long adsId);
+    public AdsResponse responseToAds (Long adsId, AdsResponse adsResponse);
 }

@@ -41,7 +41,7 @@ public class InitDataConfiguration {
             categoryService.addNew(new Category(null, "ECO", null));
 
             adsService.addNew(new Ads(null,"neco", null, null, "Apple",5000L,
-                    null,null, null, null, null, null, null, null, null)
+                    null,null, null, null, null, null, null, null, null,null)
                     , "5neco@neco.cz");
 
             benefitService.addNew(new Benefit(null, "007"));

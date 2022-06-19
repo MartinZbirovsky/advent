@@ -30,7 +30,8 @@ public class User extends UserDetail {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Role> roles= new HashSet<>();
 
-	@OneToMany(mappedBy="user")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "user_id")
 	private Set<Payment> payments = new HashSet<>();
 
 	@Min(0)

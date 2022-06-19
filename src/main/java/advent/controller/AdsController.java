@@ -1,8 +1,10 @@
 package advent.controller;
 
 import advent.model.Ads;
+import advent.model.AdsResponse;
 import advent.service.Interface.AdsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import static advent.configuration.Constants.PAGE_SIZE;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:8081")
+@Slf4j
 public class AdsController{
 
     private final AdsService adsService;
@@ -66,6 +69,10 @@ public class AdsController{
         return adsService.removeBenefit(benefitId, adsId);
     }
 
+    @PostMapping("/ads/response/{adsId}")
+    public AdsResponse responseToAd(@PathVariable Long adsId, @RequestBody AdsResponse adsResponse) {
+        return adsService.responseToAds(adsId, adsResponse);
+    }
         /*@GetMapping("/ads/myads")
     public Set<Ads> allMyAds (Principal principal) {
       return adsService.getAllMyAds(principal.getName());

@@ -25,11 +25,7 @@ public class Payment {
     private String paymentName;
     private String accountNumber;
     @Min(0)
-    private BigDecimal payed = new BigDecimal(0);
-
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
+    private BigDecimal amount = new BigDecimal(0);
 
     @CreationTimestamp
     @Temporal(TemporalType.TIME)

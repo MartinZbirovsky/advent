@@ -1,11 +1,9 @@
 package advent.service.Impl;
 
-import advent.model.Ads;
-import advent.model.Benefit;
-import advent.model.Category;
-import advent.model.User;
+import advent.model.*;
 import advent.repository.AdsRepository;
 import advent.repository.UserRepository;
+import advent.service.Interface.AdsResponseService;
 import advent.service.Interface.AdsService;
 import advent.service.Interface.BenefitService;
 import advent.service.Interface.CategoryService;
@@ -32,6 +30,7 @@ public class AdsServiceImpl implements AdsService{
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final BenefitService benefitService;
+    private final AdsResponseService adsResponseService;
 
     @Transactional
     public Ads addNew(Ads ads, String principalName) {
@@ -135,6 +134,20 @@ public class AdsServiceImpl implements AdsService{
         ads.removeBenefit(benefit);
 
         return adsRepository.save(ads);
+    }
+
+    @Override
+    @Transactional
+    public AdsResponse responseToAds(Long adsId, AdsResponse adsResponse) {
+        Ads ads = adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+
+       /* AdsResponse newResponseToAd = adsResponse;
+        adsResponseService.addNew(newResponseToAd);*/
+
+        ads.getResponse().add(adsResponse);
+        adsRepository.save(ads);
+        return adsResponse;
     }
 /*
     @Override
