@@ -8,19 +8,17 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
-@Data
 @Entity
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class AdsResponse {
+@AllArgsConstructor
+public class GlobalInfoMessage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String firstName;
-    private String secondName;
-    private String email;
-    private String phoneNumber;
-    private String description;
+    private String message;
+    private boolean active = true;
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
     private Date createdAt;

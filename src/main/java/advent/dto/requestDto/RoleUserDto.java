@@ -10,5 +10,5 @@ public class RoleUserDto {
     //@Email
     private String email;
     @Length(min = 4, max = 25)
-    private String rolename;
+    private String roleName;
 }

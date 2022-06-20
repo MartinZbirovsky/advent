@@ -1,16 +1,15 @@
 package advent.controller;
 
-import advent.model.Ads;
 import advent.model.Benefit;
-import advent.service.Impl.BenefitServiceImpl;
-import advent.service.Interface.BenefitService;
+import advent.service.impl.BenefitServiceImpl;
+import advent.service.intf.BenefitService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static advent.configuration.Constants.PAGE_NUMBER;
-import static advent.configuration.Constants.PAGE_SIZE;
+import static advent.cons.GeneralCons.PAGE_NUMBER;
+import static advent.cons.GeneralCons.PAGE_SIZE;
 
 @RestController()
 @RequestMapping("/api")

@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class RoleUserResDto {
     private String email;
-    private String rolename;
+    private String roleName;
     private String message;
 }

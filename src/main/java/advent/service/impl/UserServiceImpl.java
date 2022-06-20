@@ -1,4 +1,4 @@
-package advent.service.Impl;
+package advent.service.impl;
 
 import advent.dto.Mapper;
 import advent.dto.requestDto.RoleUserDto;
@@ -7,8 +7,9 @@ import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import advent.repository.UserRepository;
-import advent.service.Interface.RoleService;
-import advent.service.Interface.UserService;
+import advent.service.intf.RoleService;
+import advent.service.intf.UserService;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,24 +37,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private final UserRepository userRepo;
 	private final RoleService roleService;
 	private final PasswordEncoder passwordEncoder;
-	private final Mapper mapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = userRepo.findByEmail(email);
 		log.info("loadUserByUsername");
-		if(user == null) {
+		User user = userRepo.findByEmail(email).orElseThrow(() -> {
 			log.error("User not found");
-			throw new UsernameNotFoundException("no user");
-		}else{
-			log.error("User found");
-		}
-
-		List<SimpleGrantedAuthority> autorities = new ArrayList<>();
-		user.getRoles().forEach(role -> {
-			autorities.add(new SimpleGrantedAuthority(role.getName()));
+			return new UsernameNotFoundException("no user");
 		});
-		return new org.springframework.security.core.userdetails.User (/*user.getUsername()*/ user.getEmail(), user.getPassword(), autorities );
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+		return new org.springframework.security.core.userdetails.User (user.getEmail(), user.getPassword(), authorities );
 	}
 	@Override
 	public User saveUser(User user) {
@@ -64,16 +58,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User editUser(User user) {
-		User userToUpdate = userRepo.findByEmail(user.getEmail());
+		User userToUpdate = userRepo.findByEmail(user.getEmail())
+				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
+		userToUpdate.setEmail(user.getEmail());
+		userToUpdate.setFirstAddress(user.getFirstAddress());
+		userToUpdate.setSecondAddress(user.getSecondAddress());
 
-		if(userToUpdate == null) {
-			throw new EntityNotFoundException("Email not found");
-		} else {
-			userToUpdate.setEmail(user.getEmail());
-			userToUpdate.setFirstAddress(user.getFirstAddress());
-			userToUpdate.setSecondAddress(user.getSecondAddress());
-			userToUpdate.setCompanyName(user.getCompanyName());
-		}
 		return userRepo.save(userToUpdate);
 	}
 
@@ -85,11 +75,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public RoleUserResDto addRoleToUse(String userEmail, String roleName) {
-		User user = userRepo.findByEmail(userEmail);
+		User user = userRepo.findByEmail(userEmail)
+				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
 		Role role = roleService.findByName(roleName);
-
-		if(user == null)
-			throw new EntityNotFoundException("Email " + userEmail + " not found");
 
 		if(role == null)
 			throw new EntityNotFoundException("Role " + roleName + " not found");
@@ -100,20 +88,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public RoleUserResDto removeRole(RoleUserDto form) {
-		User user = userRepo.findByEmail(form.getEmail());
-		if(user == null)
-			throw new EntityNotFoundException("Email " + form.getEmail() + " not found");
+		User user = userRepo.findByEmail(form.getEmail())
+				.orElseThrow(() -> new EntityNotFoundException("Email not found " + form.getEmail()));
 
-		Role role = roleService.findByName(form.getRolename());
+		Role role = roleService.findByName(form.getRoleName());
 		if(role == null)
-			throw new EntityNotFoundException("Role  " + form.getRolename() + " not found");
+			throw new EntityNotFoundException("Role  " + form.getRoleName() + " not found");
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role removed.");
 	}
 
 	@Override
 	public BigDecimal chargeMoney(String email, Payment payment) {
-		User updateUser = userRepo.findByEmail(email);
+		User updateUser = userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
 		updateUser.getPayments().add(payment);
 		updateUser.setCurrentMoney(updateUser.getCurrentMoney().add(payment.getAmount()));
 		userRepo.save(updateUser);
@@ -123,7 +110,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User getUserByEmail(String email) {
-		return userRepo.findByEmail(email);
+		return userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
 	}
 
 	@Override
@@ -136,13 +123,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User deleteUserByEmail(String email) {
-		User user = userRepo.findByEmail(email);
-		if(user == null)
-			throw new EntityNotFoundException("Email" + email + " not found");
-
+		User user = userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
 		userRepo.delete(user);
 		return user;
 	}
-
-
 }

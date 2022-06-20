@@ -5,7 +5,7 @@ import advent.dto.responseDto.RoleUserResDto;
 import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
-import advent.service.Interface.UserService;
+import advent.service.intf.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -31,8 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static advent.configuration.Constants.PAGE_NUMBER;
-import static advent.configuration.Constants.PAGE_SIZE;
+import static advent.cons.GeneralCons.PAGE_NUMBER;
+import static advent.cons.GeneralCons.PAGE_SIZE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -69,10 +68,13 @@ public class UserController {
 		return ResponseEntity.created(uri).body(userService.saveRole(role));
 	}
 
-	@PostMapping("/role/addtouser")
-	public ResponseEntity<?> addRoleToUser(@Valid @RequestBody RoleUserDto form){
-		userService.addRoleToUse(form.getEmail(), form.getRolename());
-		return ResponseEntity.ok().build();
+	@PostMapping("/role/add")
+	public RoleUserResDto addRoleToUser(@Valid @RequestBody RoleUserDto form){
+		return userService.addRoleToUse(form.getEmail(), form.getRoleName());
+	}
+	@PostMapping("role/remove")
+	public RoleUserResDto removeRole(@Valid @RequestBody RoleUserDto form){
+		return userService.removeRole(form);
 	}
 
 	@GetMapping("/token/refresh")
@@ -115,18 +117,13 @@ public class UserController {
 	}
 
 	@GetMapping("/users/logout")
-	public void doLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void doLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.getSession().invalidate();
 		response.sendRedirect("/api/ads");
 	}
 	@DeleteMapping("/users/{email}")
 	public User deleteUserByEmail(@PathVariable String email) {
 		return userService.deleteUserByEmail(email);
-	}
-
-	@PostMapping("role/remove")
-	public RoleUserResDto removeRole(@Valid @RequestBody RoleUserDto form){
-		return userService.removeRole(form);
 	}
 
 	@PostMapping("/users/chargemoney")

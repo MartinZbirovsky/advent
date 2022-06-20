@@ -1,8 +1,8 @@
-package advent.service.Impl;
+package advent.service.impl;
 
 import advent.model.Role;
 import advent.repository.RoleRepository;
-import advent.service.Interface.RoleService;
+import advent.service.intf.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

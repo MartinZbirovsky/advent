@@ -1,15 +1,15 @@
 package advent.controller;
 
 import advent.model.Category;
-import advent.service.Interface.CategoryService;
+import advent.service.intf.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static advent.configuration.Constants.PAGE_NUMBER;
-import static advent.configuration.Constants.PAGE_SIZE;
+import static advent.cons.GeneralCons.PAGE_NUMBER;
+import static advent.cons.GeneralCons.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/cat")

@@ -1,7 +1,7 @@
 package advent.model;
 
 import advent.enums.stateAds;
-import advent.enums.workTypeAds;
+import advent.enums.WorkTypeAds;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,7 +47,7 @@ public class Ads {
     private String officePlace;
 
     @Enumerated(EnumType.STRING)
-    private workTypeAds type = workTypeAds.OTHER;
+    private WorkTypeAds workType = WorkTypeAds.OTHER;
 
     @Enumerated(EnumType.STRING)
     private stateAds state = stateAds.ACTIVE;

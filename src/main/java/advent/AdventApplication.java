@@ -11,11 +11,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class AdventApplication extends SpringBootServletInitializer {
 
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder
+														 application) {
+		return application.sources(AdventApplication.class);
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(AdventApplication.class, args);
 	}
 
-	// To utils
+
 	@Bean
 	PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();

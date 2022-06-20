@@ -1,12 +1,15 @@
-package advent.service.Impl;
+package advent.service.impl;
 
+import advent.dto.Mapper;
+import advent.dto.responseDto.AdsDeleteResDto;
+import advent.dto.responseDto.AdsDetailResDto;
+import advent.dto.responseDto.AdsHomeResDto;
 import advent.model.*;
 import advent.repository.AdsRepository;
 import advent.repository.UserRepository;
-import advent.service.Interface.AdsResponseService;
-import advent.service.Interface.AdsService;
-import advent.service.Interface.BenefitService;
-import advent.service.Interface.CategoryService;
+import advent.service.intf.AdsService;
+import advent.service.intf.BenefitService;
+import advent.service.intf.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,9 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-
-import static advent.configuration.Constants.ADS_PRICE;
 
 @Service
 @RequiredArgsConstructor
@@ -30,34 +30,30 @@ public class AdsServiceImpl implements AdsService{
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final BenefitService benefitService;
-    private final AdsResponseService adsResponseService;
+    private final Mapper mapper;
 
     @Transactional
-    public Ads addNew(Ads ads, String principalName) {
-        User actualUser = userRepository.findByEmail(principalName);
+    public AdsHomeResDto addNew(Ads ads, String principalName) {
+        User actualUser = userRepository.findByEmail(principalName)
+                .orElseThrow(() -> new EntityNotFoundException("Email not found"));
+        actualUser.reduceCurrentMoney();
+        userRepository.save(actualUser);
+        log.info("Current money REDUCED: " + actualUser.getCurrentMoney());
 
-        log.info("Current money: " + actualUser.getCurrentMoney());
-        if(actualUser.getCurrentMoney().compareTo(ADS_PRICE) == -1){
-            throw new RuntimeException("No money");
-        }else {
-            actualUser.setCurrentMoney(actualUser.getCurrentMoney().add(new BigDecimal("-10")));
-            userRepository.save(actualUser);
-            log.info("Current money REDUCED: " + actualUser.getCurrentMoney());
-        }
-
-        log.info("ASSIGN PRINCIPAL TO ADS " + principalName);
+        log.info("ASSIGN PRINCIPAL TO AD " + principalName);
         ads.setUser(actualUser);
-        return adsRepository.save(ads);
+
+        return mapper.adsToAdsHomeResDto(adsRepository.save(ads));
     }
 
     @Override
-    public Page<Ads> getAll(int pageNo, int pageSize, String sortBy) {
+    public Page<AdsHomeResDto> getAll(int pageNo, int pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        return adsRepository.findAll(paging);
+        return adsRepository.findAll(paging).map(ad -> mapper.adsToAdsHomeResDto(ad));
     }
 
     @Override
-    public Page<Ads> getAll(String adName, Long categoryId, int pageNo, int pageSize, String sortBy) {
+    public Page<AdsHomeResDto> getAll(String adName, Long categoryId, int pageNo, int pageSize, String sortBy) {
         Page<Ads> ads;
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
@@ -72,22 +68,22 @@ public class AdsServiceImpl implements AdsService{
         }else {
             ads = adsRepository.findAll(paging) ;
         }
-        return ads;
+        return ads.map(ad -> mapper.adsToAdsHomeResDto(ad));
     }
 
     @Override
-    public Ads get(Long adsId) {
-        return  adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+    public AdsDetailResDto get(Long adsId) {
+        return  mapper.adsToAdsDetailResDto(adsRepository.findById(adsId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found")));
     }
 
     @Override
     @Transactional
-    public Ads delete(Long adsId) {
+    public AdsDeleteResDto delete(Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
         adsRepository.deleteById(ads.getId());
-        return ads;
+        return mapper.adsDeleteResDto(ads);
     }
 
     @Override
@@ -141,9 +137,6 @@ public class AdsServiceImpl implements AdsService{
     public AdsResponse responseToAds(Long adsId, AdsResponse adsResponse) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
-
-       /* AdsResponse newResponseToAd = adsResponse;
-        adsResponseService.addNew(newResponseToAd);*/
 
         ads.getResponse().add(adsResponse);
         adsRepository.save(ads);

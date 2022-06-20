@@ -1,23 +1,24 @@
 package advent.configuration;
 
+import advent.dto.requestDto.GlobalInfoMessageDto;
 import advent.model.*;
-import advent.service.Interface.AdsService;
-import advent.service.Interface.BenefitService;
-import advent.service.Interface.CategoryService;
-import advent.service.Interface.UserService;
+import advent.service.intf.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.*;
 
 @Configuration
 public class InitDataConfiguration {
 
     @Bean
-    CommandLineRunner run (UserService userService, AdsService adsService, CategoryService categoryService, BenefitService benefitService){
+    CommandLineRunner run (UserService userService,
+                           AdsService adsService,
+                           CategoryService categoryService,
+                           BenefitService benefitService,
+                           GlobalInfoMessageService globalInfoMessageService){
         return args -> {
             userService.saveRole(new Role(null, "ROLE_USER"));
             userService.saveRole(new Role(null, "ROLE_MANAGER"));
@@ -48,6 +49,9 @@ public class InitDataConfiguration {
             benefitService.addNew(new Benefit(null, "Home"));
             benefitService.addNew(new Benefit(null, "Vegetable"));
 
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("DOOM"));
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("Raining"));
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
         };
     }
 

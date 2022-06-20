@@ -1,6 +1,6 @@
 package advent.enums;
 
-public enum workTypeAds {
+public enum WorkTypeAds {
     FULLTIME,
     PARTTIME,
     TRADE,

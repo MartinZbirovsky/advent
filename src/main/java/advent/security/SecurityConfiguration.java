@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -37,7 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**","/api/users/**", "/api/ads/**", "/api/benefits/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**","/api/users/**", "/api/ads/**",
+                "/api/benefits/**", "/api/info/**", "/api/pay/**").permitAll();
        // http.authorizeRequests().antMatchers(GET, "/api/ads/**").hasAnyRole("ROLE_ADMIN");
       //  http.authorizeRequests().antMatchers(POST, "/api/users/save/**").hasAnyRole("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();

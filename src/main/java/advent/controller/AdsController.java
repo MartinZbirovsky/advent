@@ -1,8 +1,11 @@
 package advent.controller;
 
+import advent.dto.responseDto.AdsDeleteResDto;
+import advent.dto.responseDto.AdsDetailResDto;
+import advent.dto.responseDto.AdsHomeResDto;
 import advent.model.Ads;
 import advent.model.AdsResponse;
-import advent.service.Interface.AdsService;
+import advent.service.intf.AdsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,8 +15,8 @@ import javax.validation.Valid;
 
 import java.security.Principal;
 
-import static advent.configuration.Constants.PAGE_NUMBER;
-import static advent.configuration.Constants.PAGE_SIZE;
+import static advent.cons.GeneralCons.PAGE_NUMBER;
+import static advent.cons.GeneralCons.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +28,7 @@ public class AdsController{
     private final AdsService adsService;
 
     @GetMapping("/ads")
-    public Page<Ads> getAds (
+    public Page<AdsHomeResDto> getAds (
             @RequestParam(defaultValue = "") String adName,
             @RequestParam(defaultValue = "0") Long categoryId,
             @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
@@ -35,12 +38,12 @@ public class AdsController{
     }
 
     @GetMapping("/ads/{id}")
-    public Ads getAdsById (@PathVariable Long id){
+    public AdsDetailResDto getAdsById (@PathVariable Long id){
         return adsService.get(id);
     }
 
     @PostMapping("/ads")
-    public Ads addAds (@Valid @RequestBody Ads ads, Principal principal){
+    public AdsHomeResDto addAds (@Valid @RequestBody Ads ads, Principal principal){
         return adsService.addNew(ads, "5neco@neco.cz"/*principal.getName()*/);
     }
 
@@ -50,7 +53,7 @@ public class AdsController{
     }
 
     @DeleteMapping("/ads/{id}")
-    public Ads deleteAds(@PathVariable Long id) {
+    public AdsDeleteResDto deleteAds(@PathVariable Long id) {
         return adsService.delete(id);
     }
 

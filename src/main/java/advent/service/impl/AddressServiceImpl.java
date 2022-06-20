@@ -1,8 +1,8 @@
-package advent.service.Impl;
+package advent.service.impl;
 
 import advent.model.Address;
 import advent.repository.AddressRepository;
-import advent.service.Interface.AddressService;
+import advent.service.intf.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

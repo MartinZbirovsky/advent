@@ -1,4 +1,4 @@
-package advent.service.Interface;
+package advent.service.intf;
 
 import advent.model.Benefit;
 import org.springframework.data.domain.Page;

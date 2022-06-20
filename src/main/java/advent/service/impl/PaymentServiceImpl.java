@@ -1,8 +1,8 @@
-package advent.service.Impl;
+package advent.service.impl;
 
 import advent.model.Payment;
 import advent.repository.PaymentRepository;
-import advent.service.Interface.PaymentService;
+import advent.service.intf.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +20,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addNew(Payment entityBody) {
-        /*  User user= (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ads.setUser(user);*/
-        // User neco = userService.findByEmail("neco@neco.cz");
-        //  entityBody.setUser(neco);
         return paymentRepository.save(entityBody);
     }
 

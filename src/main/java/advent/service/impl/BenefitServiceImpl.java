@@ -1,8 +1,8 @@
-package advent.service.Impl;
+package advent.service.impl;
 
 import advent.model.Benefit;
 import advent.repository.BenefitRepository;
-import advent.service.Interface.BenefitService;
+import advent.service.intf.BenefitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,8 +38,7 @@ public class BenefitServiceImpl implements BenefitService {
 
     @Override
     public Benefit getBenefitByName(String benefitName) {
-        Benefit benefit =  benefitRepository.findByName(benefitName);
-        return benefit;
+        return benefitRepository.findByName(benefitName);
     }
 
     @Override

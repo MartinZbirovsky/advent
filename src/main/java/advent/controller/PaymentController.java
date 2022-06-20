@@ -1,15 +1,15 @@
 package advent.controller;
 
 import advent.model.Payment;
-import advent.service.Interface.PaymentService;
+import advent.service.intf.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static advent.configuration.Constants.PAGE_NUMBER;
-import static advent.configuration.Constants.PAGE_SIZE;
+import static advent.cons.GeneralCons.PAGE_NUMBER;
+import static advent.cons.GeneralCons.PAGE_SIZE;
 @RestController
 @RequestMapping("/api/pay")
 @RequiredArgsConstructor

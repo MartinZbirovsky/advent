@@ -2,6 +2,7 @@ package advent.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,8 +25,6 @@ public class UserDetail {
     protected String fistName;
     @Length(min = 0, max = 30)
     protected String secondName;
-    @Length(min = 0, max = 80)
-    protected String companyName = "";
 
     @OneToOne(cascade = CascadeType.ALL, fetch = EAGER)
     @JoinColumn(name = "first_address_id")

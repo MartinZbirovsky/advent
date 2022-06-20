@@ -22,7 +22,7 @@ public class Category {
     private String name;
 
     @OneToMany
-    private Set<Ads> ads = new HashSet();
+    private Set<Ads> ads = new HashSet<>();
 
     public Long getId() {
         return id;
