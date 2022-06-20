@@ -1,16 +1,16 @@
 package advent.model;
 
 import advent.enums.stateAds;
-import advent.enums.workTypeAds;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import advent.enums.WorkTypeAds;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Ads {
 
     @Id
@@ -36,24 +37,26 @@ public class Ads {
     private String requirements;
 
     private String companyOffer;
-    private Long minSalary;
-    private Long maxSalary;
+
+    @Min(0)
+    private Long salaryFrom;
+    @Min(0)
+    private Long salaryTo;
 
     @Length(min = 0, max = 150)
     private String officePlace;
 
     @Enumerated(EnumType.STRING)
-    private workTypeAds type = workTypeAds.OTHER;
+    private WorkTypeAds workType = WorkTypeAds.OTHER;
 
     @Enumerated(EnumType.STRING)
     private stateAds state = stateAds.ACTIVE;
 
-    @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id")
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name= "category_id")
     private Category category;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinTable(
             name = "ads_benefits",
             joinColumns = @JoinColumn(name = "ads_id"),
@@ -65,6 +68,10 @@ public class Ads {
     @JoinColumn(name="id_user")
     private User user;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ads_id")
+    private Set<AdsResponse> response = new HashSet<>();
+
     @CreationTimestamp
     @Temporal(TemporalType.TIME)
     private Date createdAt;
@@ -72,15 +79,10 @@ public class Ads {
     @UpdateTimestamp
     @Temporal(TemporalType.TIME)
     private Date modifiedAt;
-
-    public Ads(String name) {
-        this.name = name;
-    }
-
+    
     public void addBenefit (Benefit benefit){
         this.benefits.add(benefit);
     }
-
     public void removeBenefit (Benefit benefit) {
         this.benefits.remove(benefit);
     }

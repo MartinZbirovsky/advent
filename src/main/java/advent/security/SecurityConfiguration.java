@@ -1,66 +1,52 @@
 package advent.security;
 
-import javax.servlet.http.HttpServletResponse;
-
-import advent.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@EnableWebSecurity(debug = true)
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+@Slf4j
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private final UserDetailsService userDetailsService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired private UserRepository userRepo;
-	@Autowired private JwtTokenFilter jwtTokenFilter;
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(username -> userRepo.findByEmail(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found.")));
-	}
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-		http.authorizeRequests()
-				.antMatchers("/auth/login", "/api/**", "/**").permitAll()
-				/*.antMatchers("/auth/**").permitAll()
-				.antMatchers("/api/ads/").hasRole("ADMIN")*/
-				.anyRequest()
-				.authenticated()
-				.and()
-				.logout();
-		
-        http.exceptionHandling()
-                .authenticationEntryPoint(
-                    (request, response, ex) -> response.sendError(
-						HttpServletResponse.SC_UNAUTHORIZED,
-						ex.getMessage()
-					)
-                );
-		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        log.info("configure(HttpSecurity http)");
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(STATELESS);
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**","/api/users/**", "/api/ads/**",
+                "/api/benefits/**", "/api/info/**", "/api/pay/**").permitAll();
+       // http.authorizeRequests().antMatchers(GET, "/api/ads/**").hasAnyRole("ROLE_ADMIN");
+      //  http.authorizeRequests().antMatchers(POST, "/api/users/save/**").hasAnyRole("ROLE_ADMIN");
+        http.authorizeRequests().anyRequest().authenticated();
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Override
-	@Bean
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception{
+        return super.authenticationManagerBean();
+    }
 }

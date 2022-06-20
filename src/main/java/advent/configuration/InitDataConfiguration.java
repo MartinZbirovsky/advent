@@ -1,27 +1,67 @@
 package advent.configuration;
 
+import advent.dto.requestDto.GlobalInfoMessageDto;
 import advent.model.*;
-import advent.repository.AdsRepository;
-import advent.repository.RoleRepository;
-import advent.service.UserServiceImpl;
+import advent.service.intf.*;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Configuration
 public class InitDataConfiguration {
 
     @Bean
+    CommandLineRunner run (UserService userService,
+                           AdsService adsService,
+                           CategoryService categoryService,
+                           BenefitService benefitService,
+                           GlobalInfoMessageService globalInfoMessageService){
+        return args -> {
+            userService.saveRole(new Role(null, "ROLE_USER"));
+            userService.saveRole(new Role(null, "ROLE_MANAGER"));
+            userService.saveRole(new Role(null, "ROLE_ADMIN"));
+            userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+
+            userService.saveUser(new User(null,"1neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"2neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"3neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"4neco@neco.cz", "neco", new HashSet<>(), null, null));
+            userService.saveUser(new User(null,"5neco@neco.cz", "neco", new HashSet<>(), null, new BigDecimal(200)));
+
+            userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
+            userService.addRoleToUse("2neco@neco.cz", "ROLE_MANAGER");
+            userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");
+            userService.addRoleToUse("4neco@neco.cz", "ROLE_SUPER_ADMIN");
+            userService.addRoleToUse("5neco@neco.cz", "ROLE_ADMIN");
+
+            categoryService.addNew(new Category(null, "IT", null));
+            categoryService.addNew(new Category(null, "AUTO", null));
+            categoryService.addNew(new Category(null, "ECO", null));
+
+            adsService.addNew(new Ads(null,"neco", null, null, "Apple",5000L,
+                    null,null, null, null, null, null, null, null, null,null)
+                    , "5neco@neco.cz");
+
+            benefitService.addNew(new Benefit(null, "007"));
+            benefitService.addNew(new Benefit(null, "Home"));
+            benefitService.addNew(new Benefit(null, "Vegetable"));
+
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("DOOM"));
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("Raining"));
+            globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
+        };
+    }
+
+    /*
+    @Bean
     CommandLineRunner commandLineRunner(AdsRepository aRepo,
                                         RoleRepository rRepo,
                                         UserServiceImpl uService){
         return args -> {
-         /* ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
+            ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
             User newUser = context.getBean("newuser", User.class);
             String email = "1@1.cz";
 
@@ -48,7 +88,7 @@ public class InitDataConfiguration {
             newUser.setFirstAddress(address);
             newUser.setRoles(roles);
 
-            List<Ads> newAds = new ArrayList<>();
+            List<Ads> newAds = new HashSet<>();
             newAds.add(new Ads("JAVA"));
             newAds.add(new Ads("C#"));
 
@@ -77,9 +117,9 @@ public class InitDataConfiguration {
             List<Ads> allADs = aRepo.findAll();
             allADs.forEach(e -> e.setUser(user));
 
-            aRepo.saveAll(allADs);*/
+            aRepo.saveAll(allADs);
         };
-    }
+    }*/
 }
 
 //@JsonIgnore

@@ -12,4 +12,7 @@ public interface AdsRepository extends JpaRepository<Ads, Long> {
     Page<Ads> findByNameContaining(String name, Pageable pageable);
     @Query(  value = "SELECT * FROM ADS u WHERE u.category_id = ?1", nativeQuery = true)
     Page<Ads> findByCategory(Long category, Pageable pageable);
+
+    @Query(  value = "SELECT * FROM ADS u WHERE u.name = ?1 AND u.category_id = ?2", nativeQuery = true)
+    Page<Ads> findByCategory(String name, Long category, Pageable pageable);
 }

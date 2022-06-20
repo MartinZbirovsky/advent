@@ -1,9 +1,6 @@
 package advent.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
@@ -14,36 +11,24 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Table(name = "category")
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @Length(min = 1, max = 20)
+    @Column(unique=true)
     private String name;
-    @JsonManagedReference
-    @OneToMany(mappedBy = "category"/*,  orphanRemoval = true*/)
+
+    @OneToMany
     private Set<Ads> ads = new HashSet<>();
 
-    public Category(String name, Set<Ads> ads) {
-        this.name = name;
-        this.ads = ads;
-    }
-
-    public Category(String name) {
-        this.name = name;
-    }
-
-    public void addAds(Ads ads) { this.ads.add(ads); }
-    public void removeAds(Ads ads) { this.ads.remove(ads); }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,11 +40,4 @@ public class Category {
         this.name = name;
     }
 
-    public Set<Ads> getAds() {
-        return ads;
-    }
-
-    public void setAds(Set<Ads> ads) {
-        this.ads = ads;
-    }
 }

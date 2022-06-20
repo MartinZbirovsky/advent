@@ -1,103 +1,57 @@
 package advent.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
-import static javax.persistence.FetchType.EAGER;
+import static advent.cons.GeneralCons.ADS_PRICE;
 
 @Entity
-@Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User extends UserDetail implements UserDetails {
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Slf4j
+public class User extends UserDetail {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Length(min = 0, max = 50)
-	public String fistName;
-
-	@Length(min = 0, max = 50)
-	public String secondName;
-
-	public String companyName = "";
-
-	@Column(nullable = false, length = 50, unique = true)
 	@Email
+	@Column(nullable = false, length = 50, unique = true)
 	private String email;
 
 	@Column(nullable = false, length = 64)
 	private String password;
-	// SOFT DELETE
-	@ManyToMany(fetch = EAGER, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<>();
 
-	@OneToMany(mappedBy="user")
-	private Set<Payment> payment = new HashSet<>();
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Role> roles= new HashSet<>();
 
-	@OneToMany(mappedBy="user")
-	private Set<Ads> items;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "user_id")
+	private Set<Payment> payments = new HashSet<>();
 
-	@NotNull
-	private boolean isAccountNonExpired = true;
-	@NotNull
-	private boolean isAccountNonLocked = true;
-	@NotNull
-	private boolean isCredentialsNonExpired = true;
-	@NotNull
-	private boolean isEnabled = true;
+	@Min(0)
+	protected BigDecimal currentMoney = new BigDecimal(0);
 
-	public User(String email, String password) {
-		this.email = email;
-		this.password = password;
-	}
-
-	public User(String email, String password, Address address, Set<Role> roles) {
-		this.email = email;
-		this.password = password;
-		this.firstAddress = address;
-		this.roles = roles;
-	}
-
-	public void addRole(Role role) { this.roles.add(role); }
-	public void removeRole(Role role) { this.roles.remove(role); }
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		for (Role role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
+	/**
+	 * Deduct money after creating new ad, -10: ADS_PRICE
+	 */
+	public void reduceCurrentMoney(){
+		log.info("Current money: " + this.getCurrentMoney());
+		if(this.getCurrentMoney().compareTo(ADS_PRICE) == -1){
+			throw new RuntimeException("No money");
+		}else {
+			this.setCurrentMoney(this.getCurrentMoney().add(ADS_PRICE));
 		}
-		return authorities;
-	}
-	@Override
-	public String getUsername() {
-		return this.email;
-	}
-	@Override
-	public boolean isAccountNonExpired() {
-		return this.isAccountNonExpired;
-	}
-	@Override
-	public boolean isAccountNonLocked() {
-		return this.isAccountNonLocked;
-	}
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return this.isCredentialsNonExpired;
-	}
-	@Override
-	public boolean isEnabled() {
-		return this.isEnabled;
 	}
 }
