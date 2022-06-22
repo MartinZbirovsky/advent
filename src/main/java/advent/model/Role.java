@@ -16,6 +16,10 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@Column(nullable = false, length = 50, unique = true)
-	@NotNull
+	//@NotNull
 	private String name;
+
+	public Role (String roleName) {
+		this.name = roleName;
+	}
 }

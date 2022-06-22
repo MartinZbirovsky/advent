@@ -21,7 +21,7 @@ import static advent.cons.GeneralCons.PAGE_SIZE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:8081")
+//@CrossOrigin(origins = "http://localhost:8081")
 @Slf4j
 public class AdsController{
 
@@ -44,7 +44,7 @@ public class AdsController{
 
     @PostMapping("/ads")
     public AdsHomeResDto addAds (@Valid @RequestBody Ads ads, Principal principal){
-        return adsService.addNew(ads, "5neco@neco.cz"/*principal.getName()*/);
+        return adsService.addNew(ads, "lolburhehe@seznam.cz"/*principal.getName()*/);
     }
 
     @PutMapping("/ads/{id}")

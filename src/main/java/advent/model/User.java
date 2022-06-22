@@ -1,6 +1,7 @@
 package advent.model;
 
 import advent.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,35 +43,35 @@ public class User extends UserDetail implements UserDetails {
 	@Column(nullable = false, length = 64)
 	private String password;
 
-	@Enumerated(EnumType.STRING)
-	private UserRole userRole;
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Role> roles= new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "user_id")
 	private Set<Payment> payments = new HashSet<>();
 
-
-
 	private Boolean locked = false;
-	private Boolean enabled = false;
+	private Boolean enabled = true;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		SimpleGrantedAuthority authority =
-				new SimpleGrantedAuthority(userRole.name());
+				new SimpleGrantedAuthority("userRole.name()");
 		return Collections.singletonList(authority);
 	}
+
+	@OneToMany(mappedBy="appUser", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private Set<ConfirmationToken> confirmationTokens;
 
 	public User(String firstName,
 				   String lastName,
 				   String email,
-				   String password,
-				   UserRole userRole) {
+				   String password) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.userRole = userRole;
 	}
 
 	@Override

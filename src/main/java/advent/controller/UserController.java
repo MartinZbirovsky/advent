@@ -74,15 +74,16 @@ public class UserController {
 		return ResponseEntity.created(uri).body(userService.saveRole(role));
 	}
 
-	/*@PostMapping("/role/add")
+	@PostMapping("/role/add")
 	public RoleUserResDto addRoleToUser(@Valid @RequestBody RoleUserDto form){
 		return userService.addRoleToUse(form.getEmail(), form.getRoleName());
-	}*/
+	}
+
 	@PostMapping("role/remove")
 	public RoleUserResDto removeRole(@Valid @RequestBody RoleUserDto form){
 		return userService.removeRole(form);
 	}
-/*
+
 	@GetMapping("/token/refresh")
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -120,7 +121,7 @@ public class UserController {
 		} else {
 			throw new RuntimeException("Refresh token missing");
 		}
-	}*/
+	}
 /*
 	@GetMapping("/users/logout")
 	public void doLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -134,6 +135,6 @@ public class UserController {
 
 	@PostMapping("/users/chargemoney")
 	public BigDecimal chargeMoney(@RequestBody Payment charge, Principal principal){
-		return userService.chargeMoney(/*principal.getName() */"5neco@neco.cz", charge);
+		return userService.chargeMoney(/*principal.getName() */"lolburhehe@seznam.cz", charge);
 	}
 }

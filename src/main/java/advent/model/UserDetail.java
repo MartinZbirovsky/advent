@@ -61,7 +61,8 @@ public class UserDetail {
         if(this.getCurrentMoney().compareTo(ADS_PRICE) == -1){
             throw new RuntimeException("No money");
         }else {
-            this.setCurrentMoney(this.getCurrentMoney().add(ADS_PRICE));
+            //NEED FIX
+            //this.setCurrentMoney(this.getCurrentMoney().add(ADS_PRICE));
         }
     }
 }

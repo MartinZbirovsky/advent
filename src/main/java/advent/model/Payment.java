@@ -19,7 +19,7 @@ import java.util.Date;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     @Length(min = 0, max = 200)
     private String paymentName;
     private String accountNumber;

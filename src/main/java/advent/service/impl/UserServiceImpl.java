@@ -3,14 +3,13 @@ package advent.service.impl;
 import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
-import advent.enums.UserRole;
 import advent.model.ConfirmationToken;
 import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import advent.repository.UserRepository;
 import advent.service.intf.RoleService;
-import advent.validators.EmailValidator;
+import advent.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,6 +34,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,21 +49,20 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final ConfirmationTokenServiceImpl confirmationTokenServiceImpl;
 	private final JavaMailSender mailSender;
-	private final EmailValidator emailValidator;
+	private final Validator validator;
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-	private final String USER_NOT_FOUND_MSG = "user with email %s not found";
 
 	public String register(RegistrationReqDto request) {
-		boolean isValidEmail = emailValidator.test(request.getEmail());
 
-		if (!isValidEmail) throw new IllegalStateException("email not valid");
+		if (!validator.email(request.getEmail())) throw new IllegalStateException("Email not valid");
+		if (!validator.firstName(request.getFirstName())) throw new IllegalStateException("First name not valid");
+		if (!validator.secondName(request.getFirstName())) throw new IllegalStateException("Second name not valid");
 
 		String token = signUpUser(new User(
 				request.getFirstName(),
 				request.getLastName(),
 				request.getEmail(),
-				request.getPassword(),
-				UserRole.USER
+				request.getPassword()
 		));
        /* String link = "http://localhost:8080/api/users/registration/confirm?token=" + token;
         send(request.getEmail(), buildEmail(request.getFirstName(), link));*/
@@ -103,8 +104,11 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		user.setPassword(encodedPassword);
 		userRepo.save(user);
 
-		String token = UUID.randomUUID().toString();
+		Role role = roleService.findByName("ROLE_ADMIN")
+				.orElse(roleService.addNew(new Role("ROLE_ADMIN")));
+		user.getRoles().add(role);
 
+		String token = UUID.randomUUID().toString();
 		ConfirmationToken confirmationToken = new ConfirmationToken(
 				token,
 				LocalDateTime.now(),
@@ -118,13 +122,19 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return userRepo.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+		User user = userRepo.findByEmail(email).
+				orElseThrow(() -> new UsernameNotFoundException("no user"));
+
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+
+		return new org.springframework.security.core.userdetails.User (user.getEmail(), user.getPassword(), authorities );
 	}
 
 	public User editUser(User user) {
 		User userToUpdate = userRepo.findByEmail(user.getEmail())
 				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
+
 		userToUpdate.setEmail(user.getEmail());
 		userToUpdate.setFirstAddress(user.getFirstAddress());
 		userToUpdate.setSecondAddress(user.getSecondAddress());
@@ -137,26 +147,21 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return roleService.save(role);
 	}
 
-	/*@Override
 	public RoleUserResDto addRoleToUse(String userEmail, String roleName) {
-		User user = userRepo.findByEmail(userEmail)
-				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
-		Role role = roleService.findByName(roleName);
-
-		if(role == null)
-			throw new EntityNotFoundException("Role " + roleName + " not found");
+		User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException("Email not found"));
+		Role role = roleService.findByName(roleName).orElseThrow(() -> new EntityNotFoundException("Role not found"));
 		user.getRoles().add(role);
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role added.");
-	}*/
+	}
 
 	public RoleUserResDto removeRole(RoleUserDto form) {
 		User user = userRepo.findByEmail(form.getEmail())
 				.orElseThrow(() -> new EntityNotFoundException("Email not found " + form.getEmail()));
 
-		Role role = roleService.findByName(form.getRoleName());
-		if(role == null)
-			throw new EntityNotFoundException("Role  " + form.getRoleName() + " not found");
+		Role role = roleService.findByName(form.getRoleName())
+				.orElseThrow(() -> new EntityNotFoundException("Role not found "  + form.getRoleName()));
+		user.getRoles().remove(role);
 
 		return new RoleUserResDto(user.getEmail(), role.getName(), "Role removed.");
 	}
@@ -171,7 +176,8 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	}
 
 	public User getUserByEmail(String email) {
-		return userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
+		return userRepo.findByEmail(email)
+				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
 	}
 
 	public Page<User> getUsers(String email, int pageNo, int pageSize, String sortBy){
@@ -180,7 +186,8 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	}
 
 	public User deleteUserByEmail(String email) {
-		User user = userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
+		User user = userRepo.findByEmail(email)
+				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
 		userRepo.delete(user);
 		return user;
 	}
