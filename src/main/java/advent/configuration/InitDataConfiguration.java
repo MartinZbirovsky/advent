@@ -12,7 +12,7 @@ import java.util.*;
 
 @Configuration
 public class InitDataConfiguration {
-
+/*
     @Bean
     CommandLineRunner run (UserService userService,
                            AdsService adsService,

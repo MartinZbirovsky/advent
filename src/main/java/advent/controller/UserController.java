@@ -1,10 +1,12 @@
 package advent.controller;
 
+import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
 import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
+import advent.service.impl.UserServiceImpl;
 import advent.service.intf.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -41,7 +43,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-	private final UserService userService;
+	private final UserServiceImpl userService;
+
+	@PostMapping("/users/registration")
+	public String register(@RequestBody RegistrationReqDto request) {
+		return userService.register(request);
+	}
+
+	@GetMapping(path = "/users/registration/confirm")
+	public String confirm(@RequestParam("token") String token) {
+		return userService.confirmToken(token);
+	}
 
 	@GetMapping("/users")
 	public ResponseEntity<Page<User>> getUsers(@RequestParam(defaultValue = "") String email,
@@ -49,12 +61,6 @@ public class UserController {
 											   @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
 											   @RequestParam(defaultValue = "id") String sortBy){
 		return ResponseEntity.ok().body(userService.getUsers(email, pageNo, pageSize, sortBy));
-	}
-
-	@PostMapping("/users/save")
-	public ResponseEntity<User> saveUser(@Valid @RequestBody User user){
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveUser(user));
 	}
 
 	@PutMapping("/users/edit")
@@ -72,6 +78,7 @@ public class UserController {
 	public RoleUserResDto addRoleToUser(@Valid @RequestBody RoleUserDto form){
 		return userService.addRoleToUse(form.getEmail(), form.getRoleName());
 	}
+
 	@PostMapping("role/remove")
 	public RoleUserResDto removeRole(@Valid @RequestBody RoleUserDto form){
 		return userService.removeRole(form);
@@ -115,12 +122,12 @@ public class UserController {
 			throw new RuntimeException("Refresh token missing");
 		}
 	}
-
+/*
 	@GetMapping("/users/logout")
 	public void doLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.getSession().invalidate();
 		response.sendRedirect("/api/ads");
-	}
+	}*/
 	@DeleteMapping("/users/{email}")
 	public User deleteUserByEmail(@PathVariable String email) {
 		return userService.deleteUserByEmail(email);
@@ -128,6 +135,6 @@ public class UserController {
 
 	@PostMapping("/users/chargemoney")
 	public BigDecimal chargeMoney(@RequestBody Payment charge, Principal principal){
-		return userService.chargeMoney(/*principal.getName() */"5neco@neco.cz", charge);
+		return userService.chargeMoney(/*principal.getName() */"lolburhehe@seznam.cz", charge);
 	}
 }

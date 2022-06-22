@@ -36,12 +36,17 @@ public class AdsServiceImpl implements AdsService{
     public AdsHomeResDto addNew(Ads ads, String principalName) {
         User actualUser = userRepository.findByEmail(principalName)
                 .orElseThrow(() -> new EntityNotFoundException("Email not found"));
+
         actualUser.reduceCurrentMoney();
         userRepository.save(actualUser);
         log.info("Current money REDUCED: " + actualUser.getCurrentMoney());
 
         log.info("ASSIGN PRINCIPAL TO AD " + principalName);
         ads.setUser(actualUser);
+
+        Category category = categoryService.findByName("OTHER")
+                .orElse(categoryService.addNew(new Category("OTHER")));
+        ads.setCategory(category);
 
         return mapper.adsToAdsHomeResDto(adsRepository.save(ads));
     }
@@ -89,22 +94,22 @@ public class AdsServiceImpl implements AdsService{
     @Override
     @Transactional
     public Ads edit(Long entityId, Ads ads) {
-        return adsRepository.findById(entityId)
-                .map(ad -> {
-                    ad.setName(ads.getName());
-                    return adsRepository.save(ad);
-                })
-                .orElseGet(() -> {
-                    ads.setId(entityId);
-                    return adsRepository.save(ads);
-                });
+        Ads adsToUpdate = adsRepository.findById(entityId)
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + entityId + " not found"));
+
+        adsToUpdate.setName(ads.getName());
+        adsToUpdate.setDescription(ads.getDescription());
+        adsToUpdate.setCompanyOffer(ads.getCompanyOffer());
+
+       return adsRepository.save(adsToUpdate);
     }
 
     @Transactional
     public Ads addCategory(String categoryName, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
-        Category category = categoryService.findByName(categoryName);
+        Category category = categoryService.findByName(categoryName)
+                .orElseThrow(() -> new EntityNotFoundException("Category " + adsId + " not found"));;
         ads.setCategory(category);
 
         return adsRepository.save(ads);
