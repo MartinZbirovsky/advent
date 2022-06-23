@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static advent.cons.GeneralCons.VALID_EMAIL_ADDRESS_REGEX;
-import static advent.cons.GeneralCons.VALID_NAME;
+import static advent.cons.GeneralCons.*;
 
 @Service
 public class Validator {
@@ -16,11 +15,8 @@ public class Validator {
         Matcher matcher = pattern.matcher(emailToValidate);
         return matcher.find();
     }
-    public boolean firstName(String firstName) {
-        return firstName.matches(VALID_NAME);
+    public boolean onlyStringWithCapital(String firstName) {
+        return firstName.matches(ONLY_STRING_START_WITH_CAPITAL);
     }
 
-    public boolean secondName(String secondName) {
-        return firstName(secondName);
-    }
 }

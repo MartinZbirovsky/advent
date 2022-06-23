@@ -10,6 +10,7 @@ import advent.repository.UserRepository;
 import advent.service.intf.AdsService;
 import advent.service.intf.BenefitService;
 import advent.service.intf.CategoryService;
+import advent.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,21 +32,23 @@ public class AdsServiceImpl implements AdsService{
     private final UserRepository userRepository;
     private final BenefitService benefitService;
     private final Mapper mapper;
-
+    private final Validator validator;
     @Transactional
     public AdsHomeResDto addNew(Ads ads, String principalName) {
         User actualUser = userRepository.findByEmail(principalName)
                 .orElseThrow(() -> new EntityNotFoundException("Email not found"));
 
+        if (!validator.onlyStringWithCapital(ads.getName())) throw new IllegalStateException("Advertisement name not valid");
+
+
         actualUser.reduceCurrentMoney();
         userRepository.save(actualUser);
-        log.info("Current money REDUCED: " + actualUser.getCurrentMoney());
 
         log.info("ASSIGN PRINCIPAL TO AD " + principalName);
         ads.setUser(actualUser);
 
         Category category = categoryService.findByName("OTHER")
-                .orElse(categoryService.addNew(new Category("OTHER")));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         ads.setCategory(category);
 
         return mapper.adsToAdsHomeResDto(adsRepository.save(ads));
@@ -87,6 +90,7 @@ public class AdsServiceImpl implements AdsService{
     public AdsDeleteResDto delete(Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+
         adsRepository.deleteById(ads.getId());
         return mapper.adsDeleteResDto(ads);
     }
@@ -105,9 +109,10 @@ public class AdsServiceImpl implements AdsService{
     }
 
     @Transactional
-    public Ads addCategory(String categoryName, Long adsId) {
+    public Ads changeCategory(String categoryName, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+
         Category category = categoryService.findByName(categoryName)
                 .orElseThrow(() -> new EntityNotFoundException("Category " + adsId + " not found"));;
         ads.setCategory(category);

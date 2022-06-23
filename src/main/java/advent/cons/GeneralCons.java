@@ -11,7 +11,7 @@ public final class GeneralCons {
     public static final BigDecimal ADS_PRICE = new BigDecimal(-10);
 
     // User validation
-    public static final String VALID_NAME = "[A-Z][a-z]*";
+    public static final String ONLY_STRING_START_WITH_CAPITAL = "[A-Z][a-z]*";
     public static final String VALID_EMAIL_ADDRESS_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
 
 }

@@ -13,9 +13,9 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Length(min = 1, max = 40)
-    private String street;
+    @Length(min = 0, max = 40)
+    private String street = "";
 
-    @Length(min = 1, max = 85)
-    private String city;
+    @Length(min = 0, max = 85)
+    private String city = "";
 }

@@ -16,7 +16,7 @@ public interface AdsService{
     Ads edit(Long entityId, Ads entityBody);
     AdsDeleteResDto delete(Long entityId);
     Page<AdsHomeResDto> getAll(String adName, Long category, int pageNo, int pageSize, String sortBy);
-    public Ads addCategory(String categoryName, Long adsId);
+    public Ads changeCategory(String categoryName, Long adsId);
     public Ads addBenefit(Long benefitId, Long adsId);
     public Ads removeBenefit(Long benefitId, Long adsId);
     public AdsResponse responseToAds (Long adsId, AdsResponse adsResponse);

@@ -1,6 +1,6 @@
 package advent.enums;
 
-public enum stateAds {
+public enum StateAds {
     ACTIVE,
     INACTIVE,
     REMOVED,

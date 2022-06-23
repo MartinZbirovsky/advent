@@ -1,7 +1,12 @@
 package advent.configuration;
 
 import advent.dto.requestDto.GlobalInfoMessageDto;
+import advent.dto.requestDto.RegistrationReqDto;
+import advent.dto.responseDto.AdsHomeResDto;
+import advent.enums.StateAds;
+import advent.enums.WorkTypeAds;
 import advent.model.*;
+import advent.service.impl.UserServiceImpl;
 import advent.service.intf.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -10,116 +15,70 @@ import org.springframework.context.annotation.Configuration;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static advent.cons.GeneralCons.ADS_PRICE;
+
 @Configuration
 public class InitDataConfiguration {
-/*
+
     @Bean
-    CommandLineRunner run (UserService userService,
+    CommandLineRunner run (UserServiceImpl userService,
                            AdsService adsService,
                            CategoryService categoryService,
                            BenefitService benefitService,
-                           GlobalInfoMessageService globalInfoMessageService){
+                           GlobalInfoMessageService globalInfoMessageService,
+                           AddressService addressService){
         return args -> {
-            userService.saveRole(new Role(null, "ROLE_USER"));
-            userService.saveRole(new Role(null, "ROLE_MANAGER"));
-            userService.saveRole(new Role(null, "ROLE_ADMIN"));
-            userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+            /////////////////////////Core data/////////////////////////
+            userService.saveRole(new Role("ROLE_USER"));
+            userService.saveRole(new Role("ROLE_ADMIN"));
+            userService.saveRole(new Role("ROLE_SUPER_ADMIN"));
 
-            userService.saveUser(new User(null,"1neco@neco.cz", "neco", new HashSet<>(), null, null));
-            userService.saveUser(new User(null,"2neco@neco.cz", "neco", new HashSet<>(), null, null));
-            userService.saveUser(new User(null,"3neco@neco.cz", "neco", new HashSet<>(), null, null));
-            userService.saveUser(new User(null,"4neco@neco.cz", "neco", new HashSet<>(), null, null));
-            userService.saveUser(new User(null,"5neco@neco.cz", "neco", new HashSet<>(), null, new BigDecimal(200)));
+            categoryService.addNew(new Category("IT"));
+            categoryService.addNew(new Category("AUTO"));
+            categoryService.addNew(new Category("ECO"));
+            categoryService.addNew(new Category("OTHER"));
 
-            userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
-            userService.addRoleToUse("2neco@neco.cz", "ROLE_MANAGER");
-            userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");
-            userService.addRoleToUse("4neco@neco.cz", "ROLE_SUPER_ADMIN");
-            userService.addRoleToUse("5neco@neco.cz", "ROLE_ADMIN");
-
-            categoryService.addNew(new Category(null, "IT", null));
-            categoryService.addNew(new Category(null, "AUTO", null));
-            categoryService.addNew(new Category(null, "ECO", null));
-
-            adsService.addNew(new Ads(null,"neco", null, null, "Apple",5000L,
-                    null,null, null, null, null, null, null, null, null,null)
-                    , "5neco@neco.cz");
-
-            benefitService.addNew(new Benefit(null, "007"));
-            benefitService.addNew(new Benefit(null, "Home"));
-            benefitService.addNew(new Benefit(null, "Vegetable"));
+            benefitService.addNew(new Benefit("007"));
+            benefitService.addNew(new Benefit("Home"));
+            benefitService.addNew(new Benefit("Vegetable"));
 
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("DOOM"));
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Raining"));
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
+            ///////////////////////////////////////////////////////////
+/*
+            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
+            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
+            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
+            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
+            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
+
+            userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
+            userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");
+            userService.addRoleToUse("4neco@neco.cz", "ROLE_SUPER_ADMIN");
+            userService.addRoleToUse("lolburhehe@seznam.cz", "ROLE_ADMIN");
+
+            Payment firstCharge = new Payment(null, "Charge for 200", "959599", new BigDecimal(100), null, null);
+
+            userService.chargeMoney("lolburhehe@seznam.cz", firstCharge);
+            User userToUpdate = userService.getUserByEmail("lolburhehe@seznam.cz");
+            userToUpdate.getFirstAddress().setStreet("Olomoucka");
+            userToUpdate.getFirstAddress().setCity("OL");
+            userToUpdate.getSecondAddress().setStreet("Brnenska");
+            userToUpdate.getSecondAddress().setCity("Brno");
+            userService.editUser(userToUpdate);
+
+            adsService.addNew(new Ads(null,"Neco", "Tester", "Java", "Apple",5000L,
+                    20000L,"OL, Olomouc", WorkTypeAds.FULLTIME, StateAds.ACTIVE, null, null, null, null, null,null)
+                    , "lolburhehe@seznam.cz");
+
+            //Assign Benefits
+            Benefit benefitToAdd1 = benefitService.getBenefitByName("Home");
+            AdsHomeResDto adsBeforeAddBenefit = adsService.getAll(0,1, "id").getContent().get(0);
+            adsService.addBenefit(benefitToAdd1.getId(), adsBeforeAddBenefit.getId());
+*/
         };
     }
-
-    /*
-    @Bean
-    CommandLineRunner commandLineRunner(AdsRepository aRepo,
-                                        RoleRepository rRepo,
-                                        UserServiceImpl uService){
-        return args -> {
-            ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
-            User newUser = context.getBean("newuser", User.class);
-            String email = "1@1.cz";
-
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String password = passwordEncoder.encode("neco");
-
-            int numUsers = uService.getUsers("", 0, 5, "id").getSize();
-            int numRoles = rRepo.findAll().size();
-            int numAds = aRepo.findAll().size();
-
-            Set<Role> roles = new HashSet<>();
-            roles.add(new Role("ROLE_ADMIN"));
-            roles.add(new Role("ROLE_EDITOR"));
-            roles.add(new Role("ROLE_CUSTOMER"));
-
-            // Create roles
-            if(numRoles == 0)
-                rRepo.saveAll(roles);
-
-            Address address = new Address("Olomoucka", "Olomouc");
-
-            newUser.setEmail(email);
-            newUser.setPassword(password);
-            newUser.setFirstAddress(address);
-            newUser.setRoles(roles);
-
-            List<Ads> newAds = new HashSet<>();
-            newAds.add(new Ads("JAVA"));
-            newAds.add(new Ads("C#"));
-
-            Category category = new Category("IT");
-            newAds.get(0).setCategory(category);
-            newAds.get(1).setCategory(category);
-
-            Benefit benefit1 = new Benefit("13 plat");
-            Benefit benefit2 = new Benefit("Home office");
-
-            newAds.get(0).addBenefit(benefit1);
-            newAds.get(0).addBenefit(benefit2);
-            newAds.get(1).addBenefit(benefit1);
-
-
-            // Create users
-            if(numUsers == 0)
-                uService.addNew(newUser);
-
-            //Save ads
-            if(numAds == 0)
-                aRepo.saveAll(newAds);
-
-
-           /* User user = uService.findByEmail(email);
-            List<Ads> allADs = aRepo.findAll();
-            allADs.forEach(e -> e.setUser(user));
-
-            aRepo.saveAll(allADs);
-        };
-    }*/
 }
 
 //@JsonIgnore

@@ -1,6 +1,6 @@
 package advent.model;
 
-import advent.enums.stateAds;
+import advent.enums.StateAds;
 import advent.enums.WorkTypeAds;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,10 +47,10 @@ public class Ads {
     private String officePlace;
 
     @Enumerated(EnumType.STRING)
-    private WorkTypeAds workType = WorkTypeAds.OTHER;
+    private WorkTypeAds workType = WorkTypeAds.FULLTIME;
 
     @Enumerated(EnumType.STRING)
-    private stateAds state = stateAds.ACTIVE;
+    private StateAds state = StateAds.ACTIVE;
 
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name= "category_id")

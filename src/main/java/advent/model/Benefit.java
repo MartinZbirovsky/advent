@@ -21,4 +21,8 @@ public class Benefit {
     @Length(min = 3, max = 30)
     @Column(unique=true)
     private String name;
+
+    public Benefit(String name) {
+        this.name = name;
+    }
 }

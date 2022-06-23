@@ -20,12 +20,6 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
 
     @Override
-    @Transactional
-    public Address addNew(Address address) {
-        return addressRepository.save(address);
-    }
-
-    @Override
     public Page<Address> getAll(int pageNo, int pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         return addressRepository.findAll(paging);
@@ -44,20 +38,5 @@ public class AddressServiceImpl implements AddressService {
                 .orElseThrow(() -> new EntityNotFoundException("Address " + addressId + " not found"));
         addressRepository.deleteById(address.getId());
         return address;
-    }
-
-    @Override
-    @Transactional
-    public Address edit(Long addressId, Address address) {
-        return addressRepository.findById(addressId)
-                .map(adr -> {
-                    adr.setStreet(address.getStreet());
-                    adr.setCity(address.getCity());
-                    return addressRepository.save(adr);
-                })
-                .orElseGet(() -> {
-                    address.setId(addressId);
-                    return addressRepository.save(address);
-                });
     }
 }

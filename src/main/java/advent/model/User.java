@@ -51,7 +51,7 @@ public class User extends UserDetail implements UserDetails {
 	private Set<Payment> payments = new HashSet<>();
 
 	private Boolean locked = false;
-	private Boolean enabled = true;
+	private Boolean enabled = false;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

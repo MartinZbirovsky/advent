@@ -59,7 +59,7 @@ public class AdsController{
 
     @PostMapping("/ads/addCategory/{categoryName}/toAds/{adsId}")
     public Ads addCategory(@PathVariable String categoryName, @PathVariable Long adsId) {
-        return adsService.addCategory(categoryName, adsId);
+        return adsService.changeCategory(categoryName, adsId);
     }
 
     @PostMapping("/ads/addBenefit/{benefitId}/toAds/{adsId}")
