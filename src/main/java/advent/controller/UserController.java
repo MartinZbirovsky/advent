@@ -47,7 +47,12 @@ public class UserController {
 
 	@PostMapping("/users/registration")
 	public String register(@RequestBody RegistrationReqDto request) {
-		return userService.register(request);
+		return userService.registerUser(request);
+	}
+
+	@GetMapping(path = "/users/resendconfirm")
+	public String resendConfirm(@RequestParam("email") String token) {
+		return userService.resendConfirmToken(token);
 	}
 
 	@GetMapping(path = "/users/registration/confirm")

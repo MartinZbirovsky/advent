@@ -60,9 +60,9 @@ public class User extends UserDetail implements UserDetails {
 		return Collections.singletonList(authority);
 	}
 
-	@OneToMany(mappedBy="appUser", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy="appUser", cascade = CascadeType.ALL)
 	@JsonIgnore
-	private Set<ConfirmationToken> confirmationTokens;
+	private ConfirmationToken confirmationTokens;
 
 	public User(String firstName,
 				   String lastName,
@@ -91,7 +91,7 @@ public class User extends UserDetail implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return !locked;
+		return locked;
 	}
 
 	@Override

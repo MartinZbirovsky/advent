@@ -51,27 +51,71 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	private final Validator validator;
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	public String register(RegistrationReqDto request) {
+	public String registerUser(RegistrationReqDto request) {
 
-		if (!validator.email(request.getEmail())) throw new IllegalStateException("Email not valid");
-		if (!validator.onlyStringWithCapital(request.getFirstName())) throw new IllegalStateException("First name not valid");
-		if (!validator.onlyStringWithCapital(request.getFirstName())) throw new IllegalStateException("Second name not valid");
+		if (!validator.email(request.getEmail()))
+			throw new IllegalStateException("Email not valid");
+		if (!validator.onlyStringWithCapital(request.getFirstName()))
+			throw new IllegalStateException("First name not valid");
+		if (!validator.onlyStringWithCapital(request.getFirstName()))
+			throw new IllegalStateException("Second name not valid");
 
-		String token = signUpUser(new User(
+		if (userRepo.findByEmail(request.getEmail()).isPresent())
+			throw new IllegalStateException("Email already taken");
+
+		return createRegisterUser(new User(
 				request.getFirstName(),
 				request.getLastName(),
 				request.getEmail(),
 				request.getPassword()
 		));
-		sendEmail(request.getEmail(), token);
-
-		return token;
 	}
+
+	/**
+	 * Create new user in registration.
+	 * @param user
+	 * @return
+	 */
+	private String createRegisterUser(User user) {
+		// TODO check of attributes are the same and
+
+		String encodedPassword = passwordEncoder.encode(user.getPassword());
+		user.setFirstAddress(new Address());
+		user.setSecondAddress(new Address());
+		user.setPassword(encodedPassword);
+		userRepo.save(user);
+
+		Role role = roleService.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role ADMIN not found"));
+		user.getRoles().add(role);
+
+		String confirmToken = createConfirmToken(user);
+
+		// Send confirm token to user
+		//sendEmail(user.getEmail(), confirmToken);
+		return confirmToken;
+	}
+
+	/**
+	 * Create confirm token with user email
+	 * @param user - User model
+	 * @return
+	 */
+	public String createConfirmToken(User user){
+		String token = UUID.randomUUID().toString();
+		ConfirmationToken confirmationToken = new ConfirmationToken(
+				token,
+				LocalDateTime.now(),
+				LocalDateTime.now().plusMinutes(15),
+				user
+		);
+		confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
+		return token;
+	};
 
 	public String confirmToken(String token) {
 		ConfirmationToken confirmationToken = confirmationTokenServiceImpl
 				.getToken(token)
-				.orElseThrow(() -> new IllegalStateException("token not found"));
+				.orElseThrow(() -> new IllegalStateException("Token not found"));
 
 		if (confirmationToken.getConfirmedAt() != null)
 			throw new IllegalStateException("email already confirmed");
@@ -85,44 +129,23 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return "confirmed";
 	}
 
-	/**
-	 * Create new user in registration.
-	 * @param user
-	 * @return
-	 */
-	private String signUpUser(User user) {
-		boolean userExists = userRepo.findByEmail(user.getEmail()).isPresent();
-		if (userExists) {
-			// TODO check of attributes are the same and
-			// TODO if email not confirmed send confirmation email.
-			throw new IllegalStateException("Email already taken");
-		}
+	public String resendConfirmToken(String userEmail){
+		User user = userRepo.findByEmail(userEmail).
+				orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
-		String encodedPassword = passwordEncoder.encode(user.getPassword());
-		user.setFirstAddress(new Address());
-		user.setSecondAddress(new Address());
-		user.setPassword(encodedPassword);
-		userRepo.save(user);
+		if(user.getConfirmationTokens().getConfirmedAt() != null)
+			throw new UsernameNotFoundException("User has already been verified");
 
-		Role role = roleService.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Email not found"));
-		user.getRoles().add(role);
+		user.getConfirmationTokens().setExpiresAt(LocalDateTime.now().plusMinutes(30));
+		//sendEmail(user.getEmail(), user.getConfirmationTokens().getToken());
 
-		String token = UUID.randomUUID().toString();
-		ConfirmationToken confirmationToken = new ConfirmationToken(
-				token,
-				LocalDateTime.now(),
-				LocalDateTime.now().plusMinutes(15),
-				user
-		);
-		confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
-//       TODO: SEND EMAIL
-		return token;
+		return "New confirm email send to " + userEmail;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email).
-				orElseThrow(() -> new UsernameNotFoundException("no user"));
+				orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
@@ -210,16 +233,16 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 
 		// Email setting
 		String host = "smtp.gmail.com";
-		String from = "";
+		String from = "martin155mz@gmail.com";
 		Properties properties = System.getProperties();
 		properties.put("mail.smtp.host", host);
 		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.ssl.enable", "true");
 		properties.put("mail.smtp.auth", "true");
-		String msgToSend = buildEmail(emailTo, activationLink);
+		String msgToSend = buildConfirmTemplate(emailTo, activationLink);
 		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, "pass");
+				return new PasswordAuthentication(from, "neaqadkesehbnzzc");
 			}
 		});
 
@@ -252,7 +275,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	 * @param link - Link for account activation
 	 * @return
 	 */
-	private String buildEmail(String userEmail, String link) {
+	private String buildConfirmTemplate(String userEmail, String link) {
 		return "<!DOCTYPE html>\n" +
 				"<html>\n" +
 				"\n" +
@@ -397,7 +420,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 				"                                    <td bgcolor=\"#ffffff\" align=\"center\" style=\"padding: 20px 30px 60px 30px;\">\n" +
 				"                                        <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
 				"                                            <tr>\n" +
-				"                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#FFA73B\"><a href=" + link + "style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;\">Confirm Account</a></td>\n" +
+				"                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#FFA73B\"><a href=" + link + " style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;\">Confirm Account</a></td>\n" +
 				"                                            </tr>\n" +
 				"                                        </table>\n" +
 				"                                    </td>\n" +

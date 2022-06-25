@@ -9,9 +9,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class AdventApplication extends SpringBootServletInitializer {
 
 	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder
-														 application) {
-		return application.sources(AdventApplication.class);
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(AdventApplication.class);
 	}
 
 	public static void main(String[] args) {

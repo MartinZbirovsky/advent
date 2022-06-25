@@ -46,12 +46,12 @@ public class InitDataConfiguration {
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Raining"));
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
             ///////////////////////////////////////////////////////////
-/*
-            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
-            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
-            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
-            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
-            userService.register(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
+
+            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
+            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
+            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
+            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
+            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
 
             userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
             userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");
@@ -76,7 +76,6 @@ public class InitDataConfiguration {
             Benefit benefitToAdd1 = benefitService.getBenefitByName("Home");
             AdsHomeResDto adsBeforeAddBenefit = adsService.getAll(0,1, "id").getContent().get(0);
             adsService.addBenefit(benefitToAdd1.getId(), adsBeforeAddBenefit.getId());
-*/
         };
     }
 }
