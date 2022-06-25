@@ -233,7 +233,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 
 		// Email setting
 		String host = "smtp.gmail.com";
-		String from = "martin155mz@gmail.com";
+		String from = "";
 		Properties properties = System.getProperties();
 		properties.put("mail.smtp.host", host);
 		properties.put("mail.smtp.port", "465");
@@ -242,7 +242,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		String msgToSend = buildConfirmTemplate(emailTo, activationLink);
 		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, "neaqadkesehbnzzc");
+				return new PasswordAuthentication(from, "");
 			}
 		});
 
