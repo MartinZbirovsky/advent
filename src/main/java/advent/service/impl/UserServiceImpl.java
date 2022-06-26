@@ -71,48 +71,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		));
 	}
 
-	/**
-	 * Create new user in registration.
-	 * @param user
-	 * @return
-	 */
-	private String createRegisterUser(User user) {
-		// TODO check of attributes are the same and
-
-		String encodedPassword = passwordEncoder.encode(user.getPassword());
-		user.setFirstAddress(new Address());
-		user.setSecondAddress(new Address());
-		user.setPassword(encodedPassword);
-		userRepo.save(user);
-
-		Role role = roleService.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role ADMIN not found"));
-		user.getRoles().add(role);
-
-		String confirmToken = createConfirmToken(user);
-
-		// Send confirm token to user
-		//sendEmail(user.getEmail(), confirmToken);
-		return confirmToken;
-	}
-
-	/**
-	 * Create confirm token with user email
-	 * @param user - User model
-	 * @return
-	 */
-	public String createConfirmToken(User user){
-		String token = UUID.randomUUID().toString();
-		ConfirmationToken confirmationToken = new ConfirmationToken(
-				token,
-				LocalDateTime.now(),
-				LocalDateTime.now().plusMinutes(15),
-				user
-		);
-		confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
-		return token;
-	};
-
-	public String confirmToken(String token) {
+	public String confirmTokenWithEmailLink(String token) {
 		ConfirmationToken confirmationToken = confirmationTokenServiceImpl
 				.getToken(token)
 				.orElseThrow(() -> new IllegalStateException("Token not found"));
@@ -142,6 +101,13 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return "New confirm email send to " + userEmail;
 	}
 
+	public String lockUser(Long userId) {
+		User userToLocked= userRepo.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+		userToLocked.setLocked(true);
+		return "User " + userToLocked.getEmail() + "is lock.";
+	}
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email).
@@ -227,8 +193,34 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return user;
 	}
 
+	/**
+	 * Create new user in registration.
+	 * @param user
+	 * @return
+	 */
+	private String createRegisterUser(User user) {
+		String encodedPassword = passwordEncoder.encode(user.getPassword());
+		user.setFirstAddress(new Address());
+		user.setSecondAddress(new Address());
+		user.setPassword(encodedPassword);
+		userRepo.save(user);
+
+		Role role = roleService.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role ADMIN not found"));
+		user.getRoles().add(role);
+
+		String confirmToken = createConfirmToken(user);
+
+		//sendEmail(user.getEmail(), confirmToken);
+		return confirmToken;
+	}
+
+	/**
+	 * Send email to given user email with confirm link.
+	 * @param emailTo - User email
+	 * @param userToken - Activation link
+	 */
 	@Async
-	public void sendEmail(String emailTo, String userToken) {
+	private void sendEmail(String emailTo, String userToken) {
 		String activationLink = "http://localhost:8080/api/users/registration/confirm?token=" + userToken;
 
 		// Email setting
@@ -242,7 +234,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		String msgToSend = buildConfirmTemplate(emailTo, activationLink);
 		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, "");
+				return new PasswordAuthentication(from, "neaqadkesehbnzzc");
 			}
 		});
 
@@ -268,6 +260,23 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 			mex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Create confirm token with user email
+	 * @param user - User model
+	 * @return
+	 */
+	private String createConfirmToken(User user){
+		String token = UUID.randomUUID().toString();
+		ConfirmationToken confirmationToken = new ConfirmationToken(
+				token,
+				LocalDateTime.now(),
+				LocalDateTime.now().plusMinutes(15),
+				user
+		);
+		confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
+		return token;
+	};
 
 	/**
 	 * Create email template before send. Contains username and activation link.

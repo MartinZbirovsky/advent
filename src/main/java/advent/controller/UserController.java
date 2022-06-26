@@ -7,7 +7,6 @@ import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import advent.service.impl.UserServiceImpl;
-import advent.service.intf.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -57,7 +56,7 @@ public class UserController {
 
 	@GetMapping(path = "/users/registration/confirm")
 	public String confirm(@RequestParam("token") String token) {
-		return userService.confirmToken(token);
+		return userService.confirmTokenWithEmailLink(token);
 	}
 
 	@GetMapping("/users")
@@ -141,5 +140,10 @@ public class UserController {
 	@PostMapping("/users/chargemoney")
 	public BigDecimal chargeMoney(@RequestBody Payment charge, Principal principal){
 		return userService.chargeMoney(/*principal.getName() */"lolburhehe@seznam.cz", charge);
+	}
+
+	@GetMapping("/user/lock/{userId}")
+	public String lockUser (@PathVariable Long userId) {
+		return userService.lockUser(userId);
 	}
 }

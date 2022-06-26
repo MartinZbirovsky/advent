@@ -1,0 +1,19 @@
+:root {
+--darkBlue: #3A5F7C;
+--lightBlue: #54C9CD;
+--grey: #D2ECE1;
+--sand: #EDD6BE;
+--red: #E04852;
+}
+
+button {
+    color: var(--lightBlue);
+}
+
+ul {
+    padding: 0px;
+}
+
+li{
+    list-style-type: none;
+}

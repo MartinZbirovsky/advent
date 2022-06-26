@@ -21,7 +21,6 @@ import static advent.cons.GeneralCons.PAGE_SIZE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:8081")
 @Slf4j
 public class AdsController{
 
