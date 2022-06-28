@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
-import java.util.*;
 
-import static advent.cons.GeneralCons.ADS_PRICE;
-
+/**
+ * Class InitDataConfiguration is used for creating demo data in DB.
+ */
 @Configuration
 public class InitDataConfiguration {
 
@@ -25,8 +25,8 @@ public class InitDataConfiguration {
                            AdsService adsService,
                            CategoryService categoryService,
                            BenefitService benefitService,
-                           GlobalInfoMessageService globalInfoMessageService,
-                           AddressService addressService){
+                           GlobalInfoMessageService globalInfoMessageService
+                          ){
         return args -> {
             /////////////////////////Core data/////////////////////////
             userService.saveRole(new Role("ROLE_USER"));
@@ -79,14 +79,3 @@ public class InitDataConfiguration {
         };
     }
 }
-
-//@JsonIgnore
-   /* @GetMapping("/name")
-    public Integer getName(Authentication authentication) {
-        Optional<User> user = userRepository.findByEmail(authentication.getName());
-        return user.get().getId();
-
-    }*/
-// http://localhost:8080/api/ads
-// http://localhost:8080/auth/login
-// {"email":"neco@neco.cz", "password":"1234"}

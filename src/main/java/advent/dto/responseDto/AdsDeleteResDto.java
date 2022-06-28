@@ -1,6 +1,5 @@
 package advent.dto.responseDto;
 
-import advent.enums.WorkTypeAds;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,6 @@
 package advent.cons;
 
 import java.math.BigDecimal;
-import java.util.regex.Pattern;
 
 public final class GeneralCons {
 

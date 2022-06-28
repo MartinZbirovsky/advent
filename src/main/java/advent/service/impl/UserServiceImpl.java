@@ -49,7 +49,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final ConfirmationTokenServiceImpl confirmationTokenServiceImpl;
 	private final Validator validator;
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+	//private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	public String registerUser(RegistrationReqDto request) {
 
@@ -72,6 +72,8 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	}
 
 	public String confirmTokenWithEmailLink(String token) {
+		String userEmail;
+
 		ConfirmationToken confirmationToken = confirmationTokenServiceImpl
 				.getToken(token)
 				.orElseThrow(() -> new IllegalStateException("Token not found"));
@@ -84,8 +86,9 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 			throw new IllegalStateException("token expired");
 
 		confirmationTokenServiceImpl.setConfirmedAt(token);
-		userRepo.enableUser(confirmationToken.getAppUser().getEmail());
-		return "confirmed";
+		userEmail = confirmationToken.getAppUser().getEmail();
+		userRepo.enableUser(userEmail);
+		return userEmail + " confirmed";
 	}
 
 	public String resendConfirmToken(String userEmail){

@@ -6,7 +6,6 @@ import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
