@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFetch = (url) => {
+export const useFetch = (url) => {
     const [data, setData] = useState(null)
     const [isPending, setIsPending] = useState(true)
     const [error, setError] = useState(null)
@@ -10,7 +10,11 @@ const useFetch = (url) => {
         fetch(url, { signal: abortCont.signal })
             .then(res => {
                 if (!res.ok) {
-                    throw Error('Could not fleth data from server!')
+                    return res.json().then((text) => {
+                        setIsPending(false)
+                        setError(text)
+                        throw Error(text.message)
+                    });
                 }
                 return res.json()
             })
@@ -27,4 +31,43 @@ const useFetch = (url) => {
     }, [url]);
     return { data, isPending, error }
 }
-export default useFetch;
+
+/*
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return response.text().then((text) => { 
+                        setIsPending(false)
+                        setError(text)
+                throw Error(text) 
+            });
+        })
+        .then((data) => {
+                        setData(data)
+                        setIsPending(false)
+                        setError(null)
+        }).catch((error) => {
+        
+            console.log(error);
+        });
+
+
+.then((response) => {
+    if (response.ok) {
+        return response.json();
+    }
+    return response.text().then((text) => { 
+                setIsPending(false)
+                setError(err.message)
+        throw Error(text) 
+    });
+})
+.then((jsonResponse) => {
+                setData(data)
+                setIsPending(false)
+                setError(null)
+}).catch((error) => {
+
+    console.log(error);
+});*/

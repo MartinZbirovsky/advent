@@ -1,8 +1,10 @@
 package advent.cons;
 
 import java.math.BigDecimal;
-import java.util.regex.Pattern;
 
+/**
+ * Generaly used values like page size, default page and regex patterns for validation
+ */
 public final class GeneralCons {
 
     // Pagination default values

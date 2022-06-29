@@ -6,8 +6,12 @@
 --red: #E04852;
 }
 
-button {
-    color: var(--lightBlue);
+* {
+    color: black;
+}
+
+html {
+    background-color: var(--sand);
 }
 
 ul {
@@ -16,4 +20,11 @@ ul {
 
 li{
     list-style-type: none;
+}
+
+.adsList li:hover {
+    background-color: var(--grey);
+}
+button {
+    color: var(--lightBlue);
 }

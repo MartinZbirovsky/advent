@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Model represent request body for assign ad to category
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -5,10 +5,7 @@ import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
 import advent.dto.responseDto.AdsHomeResDto;
 import advent.model.*;
-import advent.service.intf.GlobalInfoMessageService;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 public class Mapper {
@@ -30,8 +27,9 @@ public class Mapper {
 
     /**
      * Change "Ads" to "AdsHomeResDto" - Used on the title page
+     *
      * @param ads - Ads model
-     * @return AdsHomeResDto model
+     * @return AdsHomeResDto
      */
     public AdsHomeResDto adsToAdsHomeResDto(Ads ads) {
         AdsHomeResDto adsHomeResDto = new AdsHomeResDto();
@@ -50,8 +48,9 @@ public class Mapper {
 
     /**
      * Change "Ads" to "AdsDetailResDto" - Include AdsHomeResDto used for detail view.
+     *
      * @param ads - Ads model
-     * @return AdsDetailResDto model
+     * @return AdsDetailResDto
      */
     public AdsDetailResDto adsToAdsDetailResDto(Ads ads){
         AdsDetailResDto adsDetailResDto = new AdsDetailResDto();
@@ -76,8 +75,9 @@ public class Mapper {
 
     /**
      * Change "Ads" to "AdsDeleteResDto" used after delete ads.
+     *
      * @param ads
-     * @return AdsDeleteResDto model
+     * @return AdsDeleteResDto
      */
     public AdsDeleteResDto adsDeleteResDto(Ads ads) {
         AdsDeleteResDto adsDeleteResDto = new AdsDeleteResDto();
@@ -93,6 +93,7 @@ public class Mapper {
 
     /**
      * Global info message - request body
+     *
      * @param globalInfoMessageDto
      * @return
      */

@@ -1,5 +1,5 @@
 import React from 'react'
-import useFetch from "./CustomHook";
+import { useFetch } from "../CustomHook";
 import { HomePageCat } from "./HomePageCatList";
 
 export const HomePage = () => {
