@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class BeansConfig {
 
     /**
-     * Provide instance of BCryptPasswordEncoder.
+     * Provide instance of BCryptPasswordEncoder for crypt password.
      * @return BCryptPasswordEncoder
      */
     @Bean

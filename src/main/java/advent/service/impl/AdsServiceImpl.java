@@ -38,7 +38,7 @@ public class AdsServiceImpl implements AdsService{
         User actualUser = userRepository.findByEmail(principalName)
                 .orElseThrow(() -> new EntityNotFoundException("Email not found"));
 
-        if (!validator.onlyStringWithCapital(ads.getName())) throw new IllegalStateException("Advertisement name not valid");
+        //if (!validator.onlyStringWithCapital(ads.getName())) throw new IllegalStateException("Advertisement name not valid");
 
 
         actualUser.reduceCurrentMoney();
