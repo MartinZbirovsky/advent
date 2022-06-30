@@ -14,6 +14,9 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
+/**
+ * @see advent.service.intf.RoleService
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {

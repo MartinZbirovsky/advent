@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+/**
+ * @see advent.service.intf.AdsService
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

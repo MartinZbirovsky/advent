@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from "react-router-dom";
 import { useFetch } from '../CustomHook';
 
-export const AdsPageListItemDetail = () => {
+export const AdsDetail = () => {
     const { id } = useParams();
     const { data, isPending, error } = useFetch(`http://localhost:8080/advent/api/ads/${id}`);
     //const navigate = useNavigate();

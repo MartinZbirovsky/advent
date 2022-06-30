@@ -1,11 +1,13 @@
 import React from 'react'
-import { HomePageCatItem } from './HomePageCatListItem'
-
+import { Link } from 'react-router-dom'
 export const HomePageCat = ({ data }) => {
     return (
         <>
             <div>Chose Category</div>
-            <ul>{data.content.map(category => <HomePageCatItem key = {category.id} category={category}/>)}</ul>
+            <ul>{data.content.map(category =>
+                <Link to={`/ads/${category.id}`}>
+                    <li>{category.id} {category.name}</li>
+                </Link>)}</ul>
         </>
     )
 }

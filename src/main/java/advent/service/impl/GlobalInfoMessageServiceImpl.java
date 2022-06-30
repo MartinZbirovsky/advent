@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 
+/**
+ * @see advent.service.intf.GlobalInfoMessageService
+ */
 @Service
 @RequiredArgsConstructor
 public class GlobalInfoMessageServiceImpl implements GlobalInfoMessageService {

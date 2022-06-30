@@ -3,12 +3,13 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { HomePage } from './Home/HomePage.js';
 import { Footer } from './Footer';
-import { Login } from './Login';
-import { Register } from './Register';
+import { Login } from './user/Login';
+import { Register } from './user/Register';
 import { AdsPage } from './ads/AdsPage';
-import { AdsPageListItemDetail } from './ads/AdsPageListItemDetail';
+import { AdsDetail } from './ads/AdsDetail';
 import NotFountMessage from './utils/NotFoundMessage';
 import { AddAds } from './ads/AddAds';
+import { UserPage } from './user/UserPage';
 
 function App() {
   return (
@@ -18,12 +19,13 @@ function App() {
         <main className='mainContent'>
           <Routes >
             <Route index element={<HomePage/>} />
-            <Route path="/ads" element={<AdsPage/>} />
+            <Route path="/ad/:id" element={<AdsDetail/>} /> 
+            <Route path="/ads" element={<AdsPage/>} /> 
             <Route path="/ads/:categoryId" element={<AdsPage/>} />
             <Route path="/addads" element={<AddAds/>} />
+            <Route path="/users" element={<UserPage/>} /> 
             <Route path="/login" element={<Login/>} />
             <Route path="/register" element={<Register/>} />
-            <Route path="/ad/:id" element={<AdsPageListItemDetail/>} />  
             <Route path="*" element={<NotFountMessage/>} />   
           </Routes >
         </main>

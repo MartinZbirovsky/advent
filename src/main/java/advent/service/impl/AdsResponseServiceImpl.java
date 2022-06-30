@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+/**
+ * @see advent.service.intf.AdsResponseService
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

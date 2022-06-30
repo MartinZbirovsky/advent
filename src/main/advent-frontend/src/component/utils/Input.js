@@ -1,10 +1,11 @@
 import React from 'react'
 
-export const Input = ({ idValue, impName, inpType, inpValue, inpState }) => {
+export const Input = ({ required, idValue, impName, inpType, inpValue, inpState }) => {
     return (
         <label>
             {impName}
-            <input
+            <input 
+                required = {required}
                 id={idValue}
                 type={inpType}
                 value={inpValue}

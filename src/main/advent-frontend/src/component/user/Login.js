@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { Input } from './utils/Input';
+import { Input } from '../utils/Input';
 
 export const Login = () => {
   const [username, setUsername] = useState();

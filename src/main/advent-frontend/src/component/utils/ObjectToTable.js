@@ -1,14 +1,14 @@
-export const ObjectToTable = ({ key, object }) => {
+export const ObjectToTable = ({ object }) => {
     let objectAttributes = []
     for (const prop in object) {
         if (object[prop] && prop !== "id") {
-            objectAttributes.push(<td name={prop}>{object[prop]}</td>)
+            objectAttributes.push(<td key= {prop} name={prop}>{object[prop]}</td>)
         }
     }
     return (
         <table>
             <tbody>
-                <tr key={key}>
+                <tr>
                     {objectAttributes}
                 </tr>
             </tbody>

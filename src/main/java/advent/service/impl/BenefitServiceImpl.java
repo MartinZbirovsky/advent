@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+/**
+ * @see advent.service.intf.BenefitService
+ */
 @Service
 @RequiredArgsConstructor
 public class BenefitServiceImpl implements BenefitService {

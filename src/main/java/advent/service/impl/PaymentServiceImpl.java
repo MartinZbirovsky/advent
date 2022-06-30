@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
 
+/**
+ * @see advent.service.intf.PaymentService
+ */
 @RestController
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
