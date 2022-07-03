@@ -43,8 +43,8 @@ export const Login = () => {
         <Input idValue={"password"} impName={"Password"} inpType={"password"} inpValue={password} inpState={setPassword}/>
         <input type="submit" value="Submit" />
       </form>
-      {token && <p>{token}</p>}
-      {error && <h2>{error}</h2>}
+      <p>{token}</p>
+      <p>{error}</p>
     </>
   )
 }

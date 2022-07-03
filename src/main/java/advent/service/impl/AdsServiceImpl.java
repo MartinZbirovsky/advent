@@ -1,6 +1,7 @@
 package advent.service.impl;
 
 import advent.dto.Mapper;
+import advent.dto.requestDto.CreateAdDto;
 import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
 import advent.dto.responseDto.AdsHomeResDto;
@@ -37,12 +38,12 @@ public class AdsServiceImpl implements AdsService{
     private final Mapper mapper;
     private final Validator validator;
     @Transactional
-    public AdsHomeResDto addNew(Ads ads, String principalName) {
+    public AdsHomeResDto addNew(CreateAdDto createAdDto, String principalName) {
+        Ads ads = mapper.createAdDtoAds(createAdDto);
+
         User actualUser = userRepository.findByEmail(principalName)
                 .orElseThrow(() -> new EntityNotFoundException("Email not found"));
-
         //if (!validator.onlyStringWithCapital(ads.getName())) throw new IllegalStateException("Advertisement name not valid");
-
 
         actualUser.reduceCurrentMoney();
         userRepository.save(actualUser);
@@ -50,6 +51,7 @@ public class AdsServiceImpl implements AdsService{
         log.info("ASSIGN PRINCIPAL TO AD " + principalName);
         ads.setUser(actualUser);
 
+        // for rework and remove
         Category category = categoryService.findByName("OTHER")
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         ads.setCategory(category);

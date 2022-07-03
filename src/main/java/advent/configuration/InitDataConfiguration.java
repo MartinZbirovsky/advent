@@ -1,5 +1,6 @@
 package advent.configuration;
 
+import advent.dto.requestDto.CreateAdDto;
 import advent.dto.requestDto.GlobalInfoMessageDto;
 import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.responseDto.AdsHomeResDto;
@@ -68,8 +69,8 @@ public class InitDataConfiguration {
             userToUpdate.getSecondAddress().setCity("Brno");
             userService.editUser(userToUpdate);
 
-            adsService.addNew(new Ads(null,"Neco", "Tester", "Java", "Apple",5000L,
-                    20000L,"OL, Olomouc", WorkTypeAds.FULLTIME, StateAds.ACTIVE, null, null, null, null, null,null)
+            adsService.addNew(new CreateAdDto("Neco", "Tester", "Java", "car", 5000L,
+                    20000L,"OL, Olomouc")
                     , "lolburhehe@seznam.cz");
 
             //Assign Benefits

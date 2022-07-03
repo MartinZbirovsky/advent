@@ -1,5 +1,6 @@
 package advent.service.intf;
 
+import advent.dto.requestDto.CreateAdDto;
 import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
 import advent.dto.responseDto.AdsHomeResDto;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 /**
  * <p>Ads. service</p>
  *
- * @see #addNew(Ads, String)
+ * @see #addNew(CreateAdDto, String)
  * @see #getAll(int, int, String) 
  * @see #get(Long) 
  * @see #edit(Long, Ads) 
@@ -34,7 +35,7 @@ public interface AdsService{
      * @param principalName - user name.
      * @return AdsHomeResDto
      */
-    AdsHomeResDto addNew(Ads ads, String principalName);
+    AdsHomeResDto addNew(CreateAdDto ads, String principalName);
 
     /**
      * Get all ads with pagination and sort.

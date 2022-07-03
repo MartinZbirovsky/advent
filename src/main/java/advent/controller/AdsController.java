@@ -1,5 +1,6 @@
 package advent.controller;
 
+import advent.dto.requestDto.CreateAdDto;
 import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
 import advent.dto.responseDto.AdsHomeResDto;
@@ -42,7 +43,7 @@ public class AdsController{
     }
 
     @PostMapping("/ads")
-    public AdsHomeResDto addAds (@Valid @RequestBody Ads ads, Principal principal){
+    public AdsHomeResDto addAds (@Valid @RequestBody CreateAdDto ads, Principal principal){
         return adsService.addNew(ads, "lolburhehe@seznam.cz"/*principal.getName()*/);
     }
 

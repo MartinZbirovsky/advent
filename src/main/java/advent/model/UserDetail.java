@@ -58,7 +58,7 @@ public class UserDetail {
     public void reduceCurrentMoney(){
         log.info("Current money: " + this.getCurrentMoney());
         if(this.getCurrentMoney().compareTo(ADS_PRICE) == -1){
-            throw new RuntimeException("No money");
+            throw new EntityNotFoundException("Your account balance is 0. Charge your money");
         }else {
             this.setCurrentMoney(this.getCurrentMoney().add(ADS_PRICE));
         }

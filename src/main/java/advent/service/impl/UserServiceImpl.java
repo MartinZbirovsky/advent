@@ -3,15 +3,14 @@ package advent.service.impl;
 import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
-import advent.model.*;
+import advent.dto.responseDto.UserCreateResDto;
 import advent.model.Address;
+import advent.model.*;
 import advent.repository.UserRepository;
 import advent.service.intf.RoleService;
 import advent.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,34 +42,45 @@ import java.util.UUID;
 @Transactional
 @Slf4j
 public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
-
 	private final UserRepository userRepo;
 	private final RoleService roleService;
 	private final PasswordEncoder passwordEncoder;
 	private final ConfirmationTokenServiceImpl confirmationTokenServiceImpl;
 	private final Validator validator;
-	//private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	public String registerUser(RegistrationReqDto request) {
 
-		if (!validator.email(request.getEmail()))
+	/**
+	 * Validate user registration and change fist character to upper case
+	 * @param userToRegiter - User model with basic data line name email password
+	 * @return Validated instance or User with full detail
+	 */
+	public UserCreateResDto registerUser(RegistrationReqDto userToRegiter) {
+		userToRegiter.setFirstName(validator.capitalizeFirstCharacter(userToRegiter.getFirstName()));
+		userToRegiter.setLastName(validator.capitalizeFirstCharacter(userToRegiter.getLastName()));
+
+		if (!validator.email(userToRegiter.getEmail()))
 			throw new IllegalStateException("Email not valid");
-		if (!validator.onlyStringWithCapital(request.getFirstName()))
+		if (!validator.onlyStringWithCapital(userToRegiter.getFirstName()))
 			throw new IllegalStateException("First name not valid");
-		if (!validator.onlyStringWithCapital(request.getFirstName()))
-			throw new IllegalStateException("Second name not valid");
+		if (!validator.onlyStringWithCapital(userToRegiter.getLastName()))
+			throw new IllegalStateException("Last name not valid");
 
-		if (userRepo.findByEmail(request.getEmail()).isPresent())
+		if (userRepo.findByEmail(userToRegiter.getEmail()).isPresent())
 			throw new IllegalStateException("Email already taken");
 
-		return createRegisterUser(new User(
-				request.getFirstName(),
-				request.getLastName(),
-				request.getEmail(),
-				request.getPassword()
+		return createRegisterUser( new User(
+				userToRegiter.getFirstName(),
+				userToRegiter.getLastName(),
+				userToRegiter.getEmail(),
+				userToRegiter.getPassword()
 		));
 	}
 
+	/**
+	 * Find confirm token and set him as confirm and check if is still valid or if exist.
+	 * @param token - Token as string
+	 * @return - Return message - token / email confirm
+	 */
 	public String confirmTokenWithEmailLink(String token) {
 		String userEmail;
 
@@ -91,6 +101,11 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return userEmail + " confirmed";
 	}
 
+	/**
+	 * Send new confirm token if first expire.
+	 * @param userEmail - User email
+	 * @return - Return message, new confirm token was sent to user email.
+	 */
 	public String resendConfirmToken(String userEmail){
 		User user = userRepo.findByEmail(userEmail).
 				orElseThrow(() -> new UsernameNotFoundException("user not found"));
@@ -104,13 +119,29 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return "New confirm email send to " + userEmail;
 	}
 
-	public String lockUser(Long userId) {
-		User userToLocked= userRepo.findById(userId)
+	/**
+	 * Disable user/ban
+	 * @param userId - User id
+	 * @return - Message say who ben banned
+	 */
+	public User banUser(Long userId) {
+		User userToDisable= userRepo.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-		userToLocked.setLocked(true);
-		return "User " + userToLocked.getEmail() + "is lock.";
+		userToDisable.setLocked(true);
+        userRepo.save(userToDisable);
+        return userRepo.save(userToDisable);
 	}
+
+	public User unbanUser(Long userId) {
+		User userToDisable= userRepo.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+		userToDisable.setLocked(false);
+        userRepo.save(userToDisable);
+		return userRepo.save(userToDisable);
+	}
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email).
@@ -163,7 +194,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	 * Charge money. Send user email and payment body to increase account money balance.
 	 * @param email - User email
 	 * @param payment - Payment
-	 * @return
+	 * @return Actual money balance
 	 */
 	public BigDecimal chargeMoney(String email, Payment payment) {
 		User updateUser = userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Email not found"));
@@ -177,7 +208,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	/**
 	 * Find user by his email else throw not found
 	 * @param email - User email
-	 * @return
+	 * @return User
 	 */
 	public User getUserByEmail(String email) {
 		return userRepo.findByEmail(email)
@@ -189,8 +220,8 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return email.isEmpty()	? userRepo.findAll(paging) : userRepo.findByEmailContaining(email, paging);
 	}
 
-	public User deleteUserByEmail(String email) {
-		User user = userRepo.findByEmail(email)
+	public User deleteUserByEmail(Long id) {
+		User user = userRepo.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Email not found"));
 		userRepo.delete(user);
 		return user;
@@ -198,23 +229,23 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 
 	/**
 	 * Create new user in registration.
-	 * @param user
-	 * @return
+	 * @param user - User model with full details
+	 * @return User with reduced information ID and email
 	 */
-	private String createRegisterUser(User user) {
+	private UserCreateResDto createRegisterUser(User user) {
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		user.setFirstAddress(new Address());
 		user.setSecondAddress(new Address());
 		user.setPassword(encodedPassword);
-		userRepo.save(user);
+		User createdUser = userRepo.save(user);
 
 		Role role = roleService.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role ADMIN not found"));
 		user.getRoles().add(role);
 
-		String confirmToken = createConfirmToken(user);
-
+		//String confirmToken = createConfirmToken(user);
 		//sendEmail(user.getEmail(), confirmToken);
-		return confirmToken;
+
+		return new UserCreateResDto(createdUser.getId(), createdUser.getEmail());
 	}
 
 	/**
@@ -267,7 +298,7 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 	/**
 	 * Create confirm token with user email
 	 * @param user - User model
-	 * @return
+	 * @return Confirm token as String
 	 */
 	private String createConfirmToken(User user){
 		String token = UUID.randomUUID().toString();
@@ -279,13 +310,13 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		);
 		confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
 		return token;
-	};
+	}
 
 	/**
 	 * Create email template before send. Contains username and activation link.
 	 * @param userEmail - User name or email
 	 * @param link - Link for account activation
-	 * @return
+	 * @return HTML template
 	 */
 	private String buildConfirmTemplate(String userEmail, String link) {
 		return "<!DOCTYPE html>\n" +
@@ -490,5 +521,9 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 				"</body>\n" +
 				"\n" +
 				"</html>";
+	}
+
+	public User findById(Long id) {
+		return userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("user not found"));
 	}
 }

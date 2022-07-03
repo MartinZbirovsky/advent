@@ -33,4 +33,18 @@ public class Validator {
         return name.matches(ONLY_STRING_START_WITH_CAPITAL);
     }
 
+    /**
+     * Change first character to upper case other to lower.
+     * @param textToCapitalize - Text to capitalize
+     * @return - Text after capitalize
+     */
+    public String capitalizeFirstCharacter(String textToCapitalize){
+        String firstLetter = textToCapitalize.substring(0, 1);
+        String remainingLetters = textToCapitalize.substring(1, textToCapitalize.length());
+
+        firstLetter = firstLetter.toUpperCase();
+
+        return firstLetter + remainingLetters;
+    }
+
 }

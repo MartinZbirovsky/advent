@@ -3,6 +3,7 @@ package advent.controller;
 import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
+import advent.dto.responseDto.UserCreateResDto;
 import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
@@ -45,7 +46,7 @@ public class UserController {
 	private final UserServiceImpl userService;
 
 	@PostMapping("/users/registration")
-	public String register(@RequestBody RegistrationReqDto request) {
+	public UserCreateResDto register(@RequestBody RegistrationReqDto request) {
 		return userService.registerUser(request);
 	}
 
@@ -67,6 +68,10 @@ public class UserController {
 		return ResponseEntity.ok().body(userService.getUsers(email, pageNo, pageSize, sortBy));
 	}
 
+	@GetMapping("/user/{id}")
+	public User getUserId (@PathVariable Long id){
+		return userService.findById(id);
+	}
 	@PutMapping("/users/edit")
 	public User editUser(@Valid @RequestBody User user){
 		return userService.editUser(user);
@@ -132,18 +137,23 @@ public class UserController {
 		request.getSession().invalidate();
 		response.sendRedirect("/api/ads");
 	}*/
-	@DeleteMapping("/users/{email}")
-	public User deleteUserByEmail(@PathVariable String email) {
-		return userService.deleteUserByEmail(email);
+	@DeleteMapping("/user/{id}")
+	public User deleteUserById(@PathVariable Long id) {
+		return userService.deleteUserByEmail(id);
+	}
+
+	@GetMapping("/user/ban/{userId}")
+	public User disableUser (@PathVariable Long userId) {
+		return userService.banUser(userId);
+	}
+
+	@GetMapping("/user/unban/{userId}")
+	public User enableUser (@PathVariable Long userId) {
+		return userService.unbanUser(userId);
 	}
 
 	@PostMapping("/users/chargemoney")
 	public BigDecimal chargeMoney(@RequestBody Payment charge, Principal principal){
 		return userService.chargeMoney(/*principal.getName() */"lolburhehe@seznam.cz", charge);
-	}
-
-	@GetMapping("/user/lock/{userId}")
-	public String lockUser (@PathVariable Long userId) {
-		return userService.lockUser(userId);
 	}
 }

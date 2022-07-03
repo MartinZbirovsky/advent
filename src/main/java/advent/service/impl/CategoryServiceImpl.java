@@ -26,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public Category addNew(Category category) {
+        categoryRepository.findByName(category.getName()).ifPresent(data -> {
+            throw new EntityNotFoundException("Same category exist");
+        });
         return categoryRepository.save(category);
     }
 

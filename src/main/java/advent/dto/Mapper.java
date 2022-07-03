@@ -1,5 +1,6 @@
 package advent.dto;
 
+import advent.dto.requestDto.CreateAdDto;
 import advent.dto.requestDto.GlobalInfoMessageDto;
 import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
@@ -24,6 +25,17 @@ public class Mapper {
         userCreateDtoRes.setAddress(user.getFirstAddress());
         return userCreateDtoRes;
     }*/
+
+    public Ads createAdDtoAds (CreateAdDto createAdDto) {
+        Ads ads = new Ads();
+        ads.setName(createAdDto.getName());
+        ads.setDescription(createAdDto.getDescription());
+        ads.setRequirements(createAdDto.getRequirements());
+        ads.setCompanyOffer(createAdDto.getCompanyOffer());
+        ads.setSalaryFrom(createAdDto.getSalaryFrom());
+        ads.setSalaryTo(createAdDto.getSalaryTo());
+        return ads;
+    }
 
     /**
      * Change "Ads" to "AdsHomeResDto" - Used on the title page

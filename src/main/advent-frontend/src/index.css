@@ -1,9 +1,9 @@
 :root {
---darkBlue: #3A5F7C;
---lightBlue: #54C9CD;
---grey: #D2ECE1;
---sand: #EDD6BE;
---red: #E04852;
+    --darkBlue: #3A5F7C;
+    --lightBlue: #54C9CD;
+    --grey: #D2ECE1;
+    --sand: #EDD6BE;
+    --red: #E04852;
 }
 
 * {
@@ -14,17 +14,98 @@ html {
     background-color: var(--sand);
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.navbar {
+    background-color: var(--darkBlue);
+    color: var(--sand);
+}
+
+.navbar ul {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.navbar a {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    color: white;
+}
+
+main {
+    width: 1000px;
+    margin: 0 auto;
+}
+td {
+    
+}
+.categoryList a:hover{
+    letter-spacing: 0.5vh;
+    color: rgba(0, 0, 0, .1);
+    transition: letter-spacing 0.5s, left 0.5s;
+    font-weight: 900;
+}
+
+main {}
+
+.footer-container {
+    background-color: var(--darkBlue);
+    color: var(--sand);
+}
+
+.footer-container footer {
+    width: 1000px;
+    margin: 0 auto;
+}
+
 ul {
     padding: 0px;
 }
 
-li{
+li {
     list-style-type: none;
 }
 
-.adsList li:hover {
+.mainContent li:hover {
     background-color: var(--grey);
 }
+
 button {
-    color: var(--lightBlue);
+    background-color: var(--lightBlue);
+    border: 0px;
 }
+
+a:link {
+    text-decoration: none;
+}
+
+nav .links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+nav .links li {
+    flex-basis: 100%;
+    text-align: center;
+}
+
+
+@media (max-width: 750px) {
+    nav .links {
+        flex-direction: column;
+    }
+}
+
+.pagination {}
+
+.searchBar {}
+
+.labelWithInput {}
+
+.adDetail {}

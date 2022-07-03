@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Data
 public class RegistrationReqDto {
     private String firstName;
     private String lastName;
