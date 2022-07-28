@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Pagination } from '../utils/Pagination'
 import { SearchBar } from '../utils/SearchBar'
 import { getData } from "../CustomHook";
-
+import { ObjectToTable } from '../utils/ObjectToTable.js';
 
 export const UserList = () => {
     const baseUrl = `http://localhost:8080/advent/api/users`
@@ -33,14 +33,7 @@ export const UserList = () => {
             {data && <>
                 <ul>
                     {data.content.map((obj) =>
-                        <li className="listItem">
-                            <Link id={obj.id} to={`/userdetail/${obj.id}`}>
-                                <p>{obj.id}</p>
-                                <p>User email: {obj.email}</p>
-                                <p>Is user confirm? {String(obj.enabled)}</p>
-                                <p>Is user banned? {String(obj.accountNonLocked)}</p>
-                            </Link>
-                        </li>
+                        <ObjectToTable object={obj} routValue={"userdetail"}/>
                     )}
                 </ul>
                 <Pagination pages={data.totalPages} elements={data.totalElements} />
@@ -49,5 +42,5 @@ export const UserList = () => {
     )
 }
 
-// import { ObjectToTable } from '../utils/ObjectToTable.js';
-// zmenit response u list user a pouzit  <ObjectToTable object={obj} routValue={"userdetail"}/>
+// 
+// zmenit response u list user a pouzit  

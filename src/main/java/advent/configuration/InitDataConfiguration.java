@@ -7,6 +7,7 @@ import advent.dto.responseDto.AdsHomeResDto;
 import advent.enums.StateAds;
 import advent.enums.WorkTypeAds;
 import advent.model.*;
+import advent.service.impl.RegisterServiceImpl;
 import advent.service.impl.UserServiceImpl;
 import advent.service.intf.*;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +27,8 @@ public class InitDataConfiguration {
                            AdsService adsService,
                            CategoryService categoryService,
                            BenefitService benefitService,
-                           GlobalInfoMessageService globalInfoMessageService
+                           GlobalInfoMessageService globalInfoMessageService,
+                           RegisterServiceImpl registerService
                           ){
         return args -> {
             /////////////////////////Core data/////////////////////////
@@ -48,11 +50,11 @@ public class InitDataConfiguration {
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
             ///////////////////////////////////////////////////////////
 
-            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
-            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
-            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
-            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
-            userService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
 
             userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
             userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");

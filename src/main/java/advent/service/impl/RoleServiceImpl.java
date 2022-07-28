@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 /**
  * @see advent.service.intf.RoleService
@@ -70,7 +69,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Optional<Role> findByName(String name) {
-        return roleRepository.findByName(name);
+    public Role findByName(String name) {
+        return roleRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Role not found"));
     }
 }

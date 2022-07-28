@@ -9,7 +9,9 @@
 * {
     color: black;
 }
-
+a {
+    text-decoration: none;
+}
 html {
     background-color: var(--sand);
 }
@@ -18,23 +20,6 @@ body {
     display: flex;
     flex-direction: column;
     margin: 0;
-}
-
-.navbar {
-    background-color: var(--darkBlue);
-    color: var(--sand);
-}
-
-.navbar ul {
-    width: 1000px;
-    margin: 0 auto;
-}
-
-.navbar a {
-    display: block;
-    text-align: center;
-    padding: 14px 16px;
-    color: white;
 }
 
 main {
@@ -80,19 +65,36 @@ button {
     border: 0px;
 }
 
-a:link {
-    text-decoration: none;
+.navbar {
+    background-color: #222;
+    color: var(--sand);
 }
-
-nav .links {
+.navbar .links {
+    letter-spacing: 1px;
+    width: 1000px;
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
 }
 
-nav .links li {
+.navbar .links li {
     flex-basis: 100%;
     text-align: center;
+}
+
+.navbar .links li a {
+    
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    color: rgb(208, 205, 205);
+}
+
+
+.active{
+    opacity: 0.5;
+    color: rgb(8, 4, 4);
 }
 
 

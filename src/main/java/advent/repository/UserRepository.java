@@ -19,5 +19,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("UPDATE User a " +
 			"SET a.enabled = TRUE WHERE a.email = ?1")
 	int enableUser(String email);
+
+	/**
+	 * Page with list of User
+	 * @param email
+	 * @param pageable
+	 * @return
+	 */
 	Page<User> findByEmailContaining(String email, Pageable pageable);
 }

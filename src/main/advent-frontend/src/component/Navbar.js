@@ -1,18 +1,18 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 
 export const Navbar = () => {
   return (
     <nav className="navbar">
       <ul className="links">
-        <li><Link to="/">HOME</Link></li>
-        <li><Link to="/ads">SHOW ADS</Link></li>
-        <li><Link to="/addads">ADD NEW</Link></li>    
-        <li><Link to="/users">USERS</Link></li>
-        <li><Link to="/categories">CATEGORIES</Link></li>
-        <li><Link to="/user">SETTING</Link></li>
-        <li><Link to="/login">LOGIN</Link></li>
-        <li><Link to="/register">REGISTER</Link></li>
+        <li><NavLink to="/">HOME</NavLink></li>
+        <li><NavLink to="/ads">SHOW ADS</NavLink></li>
+        <li><NavLink to="/addads">ADD NEW</NavLink></li>    
+        <li><NavLink to="/users">USERS</NavLink></li>
+        <li><NavLink to="/categories">CATEGORIES</NavLink></li>
+        <li><NavLink to="/user">SETTING</NavLink></li>
+        <li><NavLink to="/login">LOGIN</NavLink></li>
+        <li><NavLink to="/register">REGISTER</NavLink></li>
       </ul>
       <Outlet />
     </nav>

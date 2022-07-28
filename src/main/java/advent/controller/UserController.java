@@ -4,9 +4,11 @@ import advent.dto.requestDto.RegistrationReqDto;
 import advent.dto.requestDto.RoleUserDto;
 import advent.dto.responseDto.RoleUserResDto;
 import advent.dto.responseDto.UserCreateResDto;
+import advent.dto.responseDto.UserListResDto;
 import advent.model.Payment;
 import advent.model.Role;
 import advent.model.User;
+import advent.service.impl.RegisterServiceImpl;
 import advent.service.impl.UserServiceImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -43,29 +45,29 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
+	private final RegisterServiceImpl userRegisterService;
 	private final UserServiceImpl userService;
-
 	@PostMapping("/users/registration")
 	public UserCreateResDto register(@RequestBody RegistrationReqDto request) {
-		return userService.registerUser(request);
+		return userRegisterService.registerUser(request);
 	}
 
 	@GetMapping(path = "/users/resendconfirm")
 	public String resendConfirm(@RequestParam("email") String token) {
-		return userService.resendConfirmToken(token);
+		return userRegisterService.resendConfirmToken(token);
 	}
 
 	@GetMapping(path = "/users/registration/confirm")
 	public String confirm(@RequestParam("token") String token) {
-		return userService.confirmTokenWithEmailLink(token);
+		return userRegisterService.confirmTokenWithEmailLink(token);
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<Page<User>> getUsers(@RequestParam(defaultValue = "") String email,
-											   @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
-											   @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
-											   @RequestParam(defaultValue = "id") String sortBy){
-		return ResponseEntity.ok().body(userService.getUsers(email, pageNo, pageSize, sortBy));
+	public Page<UserListResDto> getUsers(@RequestParam(defaultValue = "") String email,
+										 @RequestParam(defaultValue = PAGE_NUMBER) Integer pageNo,
+										 @RequestParam(defaultValue = PAGE_SIZE) Integer pageSize,
+										 @RequestParam(defaultValue = "id") String sortBy){
+		return userService.getUsers(email, pageNo, pageSize, sortBy);
 	}
 
 	@GetMapping("/user/{id}")

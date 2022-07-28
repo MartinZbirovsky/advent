@@ -119,7 +119,7 @@ public class AdsServiceImpl implements AdsService{
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
 
         Category category = categoryService.findByName(categoryName)
-                .orElseThrow(() -> new EntityNotFoundException("Category " + adsId + " not found"));;
+                .orElseThrow(() -> new EntityNotFoundException("Category " + adsId + " not found"));
         ads.setCategory(category);
 
         return adsRepository.save(ads);

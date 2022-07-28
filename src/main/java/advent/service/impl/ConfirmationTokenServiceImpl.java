@@ -6,23 +6,31 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class ConfirmationTokenServiceImpl {
-
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
+    /**
+     * Save new token to database.
+     * @param token - token
+     */
     public void saveConfirmationToken(ConfirmationToken token) {
         confirmationTokenRepository.save(token);
     }
 
-    public Optional<ConfirmationToken> getToken(String token) {
-        return confirmationTokenRepository.findByToken(token);
+    /**
+     * Find token by his value.
+     * @param token - Token value
+     * @return token
+     */
+    public ConfirmationToken getToken(String token) {
+        return confirmationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalStateException("Token not found"));
     }
 
-    public int setConfirmedAt(String token) {
-        return confirmationTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
+    public void setConfirmedAt(String token) {
+        confirmationTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
     }
 }

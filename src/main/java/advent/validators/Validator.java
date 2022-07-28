@@ -46,5 +46,4 @@ public class Validator {
 
         return firstLetter + remainingLetters;
     }
-
 }

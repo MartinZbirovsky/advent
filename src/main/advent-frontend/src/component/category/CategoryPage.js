@@ -55,8 +55,8 @@ export const CategoryPage = () => {
         {data &&
           <ul className='itemList'>{
             data.content.map(category =>
-              <li key={category.id} onClick={() => deleteItemByIdFromUrl(category, url)}>{category.id + " - " + category.name}
-                <button>Remove</button>
+              <li key={category.id} >{category.id + " - " + category.name}
+                <button onClick={() => deleteItemByIdFromUrl(category, url)}>Remove</button>
               </li>)
           }
           </ul>

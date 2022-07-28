@@ -5,6 +5,7 @@ import advent.dto.requestDto.GlobalInfoMessageDto;
 import advent.dto.responseDto.AdsDeleteResDto;
 import advent.dto.responseDto.AdsDetailResDto;
 import advent.dto.responseDto.AdsHomeResDto;
+import advent.dto.responseDto.UserListResDto;
 import advent.model.*;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,27 @@ public class Mapper {
         return userCreateDtoRes;
     }*/
 
+    /**
+     * Change User (all details) to UserListResDto - Used for list of users
+     * @param user
+     * @return
+     */
+    public UserListResDto userToUserListResDto (User user) {
+        UserListResDto userListResDto = new UserListResDto();
+        userListResDto.setId(user.getId());
+        userListResDto.setFirstName(user.getFirstName());
+        userListResDto.setLastName(user.getLastName());
+        userListResDto.setEmail(user.getEmail());
+        userListResDto.setLocked(user.getLocked());
+        userListResDto.setEnabled(user.getEnabled());
+        return userListResDto;
+    }
+
+    /**
+     * Change CreateAdDto to Ad - create page
+     * @param createAdDto
+     * @return
+     */
     public Ads createAdDtoAds (CreateAdDto createAdDto) {
         Ads ads = new Ads();
         ads.setName(createAdDto.getName());

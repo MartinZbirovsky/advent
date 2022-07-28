@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 export const ObjectToTable = ({ object, routValue }) => {
 
     let objectAttributes = []
-    console.log(object)
+    
     for (const prop in object) {
-        if (object[prop] && prop !== "id") {
-            objectAttributes.push(<td key={prop} name={prop}>{object[prop]}</td>)
+        if (object[prop] !== null && prop !== "id") {
+                objectAttributes.push(<tr key={prop} name={prop}>{String(object[prop])}</tr>)    
         }
     }
     return (
