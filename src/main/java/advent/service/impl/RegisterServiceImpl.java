@@ -10,7 +10,6 @@ import advent.service.intf.RoleService;
 import advent.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +30,7 @@ public class RegisterServiceImpl {
     private final UserServiceImpl userService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final ConfirmationTokenServiceImpl confirmationTokenServiceImpl;
+    private final ConfirmationTokenServiceImpl confirmationTokenService;
     private final EmailServiceImpl emailService;
 
     /**
@@ -40,16 +39,20 @@ public class RegisterServiceImpl {
      * @return Validated instance or User with full detail
      */
     public UserCreateResDto registerUser(RegistrationReqDto userToRegister) {
-        userToRegister.setFirstName(validator.capitalizeFirstCharacter(userToRegister.getFirstName()));
-        userToRegister.setLastName(validator.capitalizeFirstCharacter(userToRegister.getLastName()));
+        if (!validator.email(userToRegister.getEmail())
+                || !validator.onlyStringWithCapital(userToRegister.getFirstName())
+                || !validator.onlyStringWithCapital(userToRegister.getLastName())
+                || userToRegister.getFirstName().isEmpty()
+                || userToRegister.getLastName().isEmpty()
+                || userToRegister.getEmail().isEmpty()
+                || userToRegister.getPassword().isEmpty())
+            throw stateException("Invalid credentials");
 
         if (userService.findByEmail(userToRegister.getEmail()).isPresent())
-            throw new IllegalStateException("Email already taken");
+            throw stateException("Email already taken");
 
-        if (validator.email(userToRegister.getEmail())
-                && validator.onlyStringWithCapital(userToRegister.getFirstName())
-                && validator.onlyStringWithCapital(userToRegister.getLastName()))
-            throw new IllegalStateException("Invalid credentials");
+        userToRegister.setFirstName(validator.capitalizeFirstCharacter(userToRegister.getFirstName()));
+        userToRegister.setLastName(validator.capitalizeFirstCharacter(userToRegister.getLastName()));
 
         return createRegisterUser( new User(
                 userToRegister.getFirstName(),
@@ -66,16 +69,16 @@ public class RegisterServiceImpl {
      */
     public String confirmTokenWithEmailLink(String token) {
         String userEmail;
-        ConfirmationToken confirmationToken = confirmationTokenServiceImpl.getToken(token);
+        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token);
 
         if (confirmationToken.getConfirmedAt() != null)
-            throw new IllegalStateException("email already confirmed");
+            throw stateException("Email already confirmed!");
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if (expiredAt.isBefore(LocalDateTime.now()))
-            throw new IllegalStateException("token expired");
+            throw stateException("Token expired");
 
-        confirmationTokenServiceImpl.setConfirmedAt(token);
+        confirmationTokenService.setConfirmedAt(token);
         userEmail = confirmationToken.getAppUser().getEmail();
         userService.enableUser(userEmail);
 
@@ -91,7 +94,7 @@ public class RegisterServiceImpl {
         User user = userService.getUserByEmail(userEmail);
 
         if(user.getConfirmationTokens().getConfirmedAt() != null || user.isEnabled())
-            throw new UsernameNotFoundException("User has already been verified");
+            throw stateException("User has already been verified");
 
         user.getConfirmationTokens().setExpiresAt(LocalDateTime.now().plusMinutes(30));
         emailService.sendEmail(user.getEmail(), user.getConfirmationTokens().getToken());
@@ -106,16 +109,15 @@ public class RegisterServiceImpl {
      */
     private UserCreateResDto createRegisterUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
+
         user.setFirstAddress(new Address());
         user.setSecondAddress(new Address());
         user.setPassword(encodedPassword);
+        user.getRoles().add(roleService.findByName("ROLE_USER"));
+
         User createdUser = userService.saveNewUser(user);
-
-        Role role = roleService.findByName("ROLE_ADMIN");
-        user.getRoles().add(role);
-
         String confirmToken = createConfirmToken(user);
-        emailService.sendEmail(user.getEmail(), confirmToken);
+        //emailService.sendEmail(user.getEmail(), confirmToken);
 
         return new UserCreateResDto(createdUser.getId(), createdUser.getEmail());
     }
@@ -133,7 +135,16 @@ public class RegisterServiceImpl {
                 LocalDateTime.now().plusMinutes(15),
                 user
         );
-        confirmationTokenServiceImpl.saveConfirmationToken(confirmationToken);
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
+    }
+
+    /**
+     * Error message with custom message
+     * @param aMessage - Message
+     * @return
+     */
+    private IllegalStateException stateException (String aMessage) {
+        return new IllegalStateException(aMessage);
     }
 }

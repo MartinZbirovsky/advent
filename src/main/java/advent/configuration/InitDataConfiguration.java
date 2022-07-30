@@ -50,11 +50,11 @@ public class InitDataConfiguration {
             globalInfoMessageService.addNew(new GlobalInfoMessageDto("Moon fall"));
             ///////////////////////////////////////////////////////////
 
-            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco"));
-            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco"));
-            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco"));
-            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco"));
-            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "1neco@neco.cz", "neco1"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "2neco@neco.cz", "neco1"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "3neco@neco.cz", "neco1"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "4neco@neco.cz", "neco1"));
+            registerService.registerUser(new RegistrationReqDto("Pepa", "Zdepa", "lolburhehe@seznam.cz", "neco1"));
 
             userService.addRoleToUse("1neco@neco.cz", "ROLE_USER");
             userService.addRoleToUse("3neco@neco.cz", "ROLE_ADMIN");

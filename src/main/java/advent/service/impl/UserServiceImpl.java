@@ -55,6 +55,11 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return userBanUnban(userId, false);
 	}
 
+	/**
+	 * Add new user to database.
+	 * @param user - User to save
+	 * @return - Saved user
+	 */
 	public User saveNewUser(User user) {
 		return userRepo.save(user);
 	}
@@ -153,6 +158,11 @@ public class UserServiceImpl implements /*UserService,*/ UserDetailsService {
 		return user;
 	}
 
+	/**
+	 * Find user by his ID.
+	 * @param id - User id
+	 * @return - user entity
+	 */
 	public User findById(Long id) {
 		return userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("user not found"));
 	}

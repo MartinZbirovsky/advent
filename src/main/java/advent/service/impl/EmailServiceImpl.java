@@ -28,7 +28,7 @@ public class EmailServiceImpl {
 
         // Email setting
         String host = "smtp.gmail.com";
-        String from = "";
+        String from = "testemail@neco.neco";
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "465");

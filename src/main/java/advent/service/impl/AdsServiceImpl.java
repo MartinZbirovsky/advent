@@ -30,7 +30,6 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class AdsServiceImpl implements AdsService{
-
     private final AdsRepository adsRepository;
     private final CategoryService categoryService;
     private final UserRepository userRepository;
@@ -87,14 +86,14 @@ public class AdsServiceImpl implements AdsService{
     @Override
     public AdsDetailResDto get(Long adsId) {
         return  mapper.adsToAdsDetailResDto(adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found")));
+                .orElseThrow(() -> notFoundMessage(adsId)));
     }
 
     @Override
     @Transactional
     public AdsDeleteResDto delete(Long adsId) {
         Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
 
         adsRepository.deleteById(ads.getId());
         return mapper.adsDeleteResDto(ads);
@@ -104,7 +103,7 @@ public class AdsServiceImpl implements AdsService{
     @Transactional
     public Ads edit(Long entityId, Ads ads) {
         Ads adsToUpdate = adsRepository.findById(entityId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + entityId + " not found"));
+                .orElseThrow(() -> notFoundMessage(entityId));
 
         adsToUpdate.setName(ads.getName());
         adsToUpdate.setDescription(ads.getDescription());
@@ -116,10 +115,10 @@ public class AdsServiceImpl implements AdsService{
     @Transactional
     public Ads changeCategory(String categoryName, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
 
         Category category = categoryService.findByName(categoryName)
-                .orElseThrow(() -> new EntityNotFoundException("Category " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
         ads.setCategory(category);
 
         return adsRepository.save(ads);
@@ -128,7 +127,7 @@ public class AdsServiceImpl implements AdsService{
     @Transactional
     public Ads addBenefit(Long benefitId, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
 
         Benefit benefit = benefitService.get(benefitId);
         ads.addBenefit(benefit);
@@ -139,7 +138,7 @@ public class AdsServiceImpl implements AdsService{
     @Transactional
     public Ads removeBenefit(Long benefitId, Long adsId) {
         Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
 
         Benefit benefit = benefitService.get(benefitId);
         ads.removeBenefit(benefit);
@@ -151,11 +150,20 @@ public class AdsServiceImpl implements AdsService{
     @Transactional
     public AdsResponse responseToAds(Long adsId, AdsResponse adsResponse) {
         Ads ads = adsRepository.findById(adsId)
-                .orElseThrow(() -> new EntityNotFoundException("Advertisement " + adsId + " not found"));
+                .orElseThrow(() -> notFoundMessage(adsId));
 
         ads.getResponse().add(adsResponse);
         adsRepository.save(ads);
         return adsResponse;
+    }
+
+    /**
+     * Not found entity message.
+     * @param aId - Record ID
+     * @return - EntityNotFoundException with message and record ID
+     */
+    private EntityNotFoundException notFoundMessage(Long aId) {
+        return new EntityNotFoundException("Advertisement " + aId + " not found");
     }
 /*
     @Override
